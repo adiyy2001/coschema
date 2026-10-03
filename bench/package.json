@@ -7,6 +7,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@coschema/geometry": "workspace:*",
     "@coschema/model": "workspace:*",
     "@coschema/sync": "workspace:*",
     "yjs": "13.6.33"

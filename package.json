@@ -18,6 +18,7 @@
     "test:sim": "vitest run --project sim test/property.test.ts",
     "sim": "tsx packages/sim/src/bin.ts",
     "bench:load": "pnpm --filter @coschema/server build && tsx bench/load/main.ts",
+    "bench:geometry": "tsx bench/geometry/main.ts",
     "build": "pnpm -r --if-present build",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build"
   },

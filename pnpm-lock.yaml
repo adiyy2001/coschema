@@ -236,6 +236,9 @@ importers:
 
   bench:
     dependencies:
+      '@coschema/geometry':
+        specifier: workspace:*
+        version: link:../packages/geometry
       '@coschema/model':
         specifier: workspace:*
         version: link:../packages/model
