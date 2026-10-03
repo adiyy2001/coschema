@@ -4,7 +4,7 @@ import { yjsVersionsIn } from '../yjs-versions.ts';
 
 describe('licenseIsAllowed', () => {
   it('accepts permissive licences', () => {
-    for (const license of ['MIT', 'Apache-2.0', 'BSD-3-Clause', 'ISC', '0BSD']) {
+    for (const license of ['MIT', 'MIT-0', 'Apache-2.0', 'BSD-3-Clause', 'ISC', '0BSD']) {
       expect(licenseIsAllowed(license)).toBe(true);
     }
   });
@@ -30,6 +30,8 @@ describe('isExcepted', () => {
   it('allows the named dev tool only with its exact licence', () => {
     expect(isExcepted('lightningcss', 'MPL-2.0')).toBe(true);
     expect(isExcepted('lightningcss-linux-x64-gnu', 'MPL-2.0')).toBe(true);
+    expect(isExcepted('caniuse-lite', 'CC-BY-4.0')).toBe(true);
+    expect(isExcepted('caniuse-lite', 'GPL-3.0')).toBe(false);
     expect(isExcepted('lightningcss', 'GPL-3.0')).toBe(false);
     expect(isExcepted('other-package', 'MPL-2.0')).toBe(false);
   });

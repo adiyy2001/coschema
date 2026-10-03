@@ -1,5 +1,6 @@
 const ALLOWED = new Set([
   'MIT',
+  'MIT-0',
   'Apache-2.0',
   'BSD-2-Clause',
   'BSD-3-Clause',
@@ -12,6 +13,7 @@ const ALLOWED = new Set([
 
 const DEV_TOOL_EXCEPTIONS: readonly { namePattern: RegExp; license: string }[] = [
   { namePattern: /^lightningcss(-[a-z0-9-]+)?$/u, license: 'MPL-2.0' },
+  { namePattern: /^caniuse-lite$/u, license: 'CC-BY-4.0' },
 ];
 
 export interface PackageInfo {

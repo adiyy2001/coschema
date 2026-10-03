@@ -1,4 +1,4 @@
-# 0018. One dev-tool licence exception: lightningcss
+# 0018. Dev-tool licence exceptions: lightningcss and caniuse-lite
 
 Status: accepted, 2026-10-03
 
@@ -12,7 +12,9 @@ The brief allows only permissive dependencies (MIT, Apache 2.0, BSD, ISC). `scri
 
 The justification is narrow: it is a build-time dev tool pulled in by Vite, it is not part of any shipped bundle, it is not modified, and there is no way to run Vite 8 without it. The unmodified MPL-2.0 source obligations only apply when distributing the code, which this repo does not.
 
-`CREDITS.md` lists it with its licence.
+`CREDITS.md` lists both with their licences.
+
+`caniuse-lite` is the second exception. It is the browser support table that browserslist reads, pulled in by the Angular build, and its data is licensed CC-BY-4.0. It is build-time data that is not copied into any bundle, and the licence only asks for attribution, which `CREDITS.md` gives. `MIT-0` (used by two `@csstools` packages) is on the allowed list, because it is MIT without the notice requirement.
 
 ## Alternatives
 
