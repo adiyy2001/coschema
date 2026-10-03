@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+.angular
+pnpm-lock.yaml
+*.md
+bench/results
