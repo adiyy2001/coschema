@@ -13,6 +13,7 @@ import {
   GraphStore,
   compareNodes,
   type EdgeId,
+  type GraphChange,
   type GraphDelta,
   type GraphEdge,
   type GraphNode,
@@ -61,6 +62,7 @@ export class GraphView {
   private readonly dirtyEdges = new Set<EdgeId>();
   private activeEdges = new Set<EdgeId>();
   private cancelFrame: (() => void) | undefined;
+  private readonly changeListeners = new Set<(delta: GraphDelta, change: GraphChange) => void>();
   private readonly unsubscribe: () => void;
 
   constructor(
@@ -72,9 +74,17 @@ export class GraphView {
     for (const node of initial.nodes) this.dirtyNodes.add(node.id);
     for (const edge of initial.edges) this.dirtyEdges.add(edge.id);
     this.flush();
-    this.unsubscribe = this.store.subscribe((delta) => {
+    this.unsubscribe = this.store.subscribe((delta, change) => {
       this.collect(delta);
+      for (const listener of [...this.changeListeners]) listener(delta, change);
     });
+  }
+
+  subscribeChanges(listener: (delta: GraphDelta, change: GraphChange) => void): () => void {
+    this.changeListeners.add(listener);
+    return () => {
+      this.changeListeners.delete(listener);
+    };
   }
 
   node(id: NodeId): Signal<GraphNode | undefined> {
@@ -197,6 +207,7 @@ export class GraphView {
 
   destroy(): void {
     this.unsubscribe();
+    this.changeListeners.clear();
     this.cancelFrame?.();
     this.cancelFrame = undefined;
     this.store.destroy();
