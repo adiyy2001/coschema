@@ -59,9 +59,26 @@ export default tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
   {
-    files: ['packages/model/src/**/*.ts'],
+    files: ['packages/model/src/**/*.ts', 'packages/sync/src/**/*.ts', 'packages/sim/src/**/*.ts'],
+    ignores: ['packages/sim/src/cli.ts', 'packages/sim/src/report.ts', 'packages/sim/src/bin.ts'],
     rules: {
       'no-restricted-properties': ['error', ...nondeterminismBan],
+    },
+  },
+  {
+    files: ['packages/sync/src/**/*.ts', 'packages/sim/src/link/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^node:',
+              message: 'This code also runs in the browser and must not use Node built-ins.',
+            },
+          ],
+        },
+      ],
     },
   },
   {
