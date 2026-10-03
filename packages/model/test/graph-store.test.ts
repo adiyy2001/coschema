@@ -18,6 +18,7 @@ import {
   setWaypoints,
   getNodes,
   type EdgeId,
+  type GraphChange,
   type GraphDelta,
   type GraphEdge,
   type GraphNode,
@@ -25,7 +26,7 @@ import {
   type NodeType,
   type PortId,
 } from '../src';
-import { createClient, syncPair, type TestClient } from './support';
+import { REMOTE_ORIGIN, createClient, syncPair, type TestClient } from './support';
 
 function collectDeltas(client: TestClient): GraphDelta[] {
   const deltas: GraphDelta[] = [];
@@ -72,6 +73,50 @@ describe('GraphStore', () => {
       label: 'ab',
       style: { fill: '#fff' },
     });
+  });
+
+  it('hands over the previous record of updated and removed nodes', () => {
+    const client = createClient(1);
+    const id = createNode(client.context, { type: 'rect', pos: [0, 0], label: 'a' });
+    const deltas = collectDeltas(client);
+    editLabel(client.context, id, 'ab');
+    deleteNodes(client.context, [id]);
+    expect(deltas[0]?.previousNodes.get(id)?.label).toBe('a');
+    expect(deltas[1]?.previousNodes.get(id)?.label).toBe('ab');
+    const created = collectDeltas(client);
+    createNode(client.context, { type: 'rect', pos: [0, 0] });
+    expect(created[0]?.previousNodes.size).toBe(0);
+  });
+
+  it('tells a local change from a remote one and names the author', () => {
+    const left = createClient(11);
+    const right = createClient(22);
+    const changes: GraphChange[] = [];
+    right.store.subscribe((_, change) => changes.push(change));
+    const id = createNode(left.context, { type: 'rect', pos: [0, 0] });
+    syncPair(left, right);
+    moveNodes(left.context, [{ id, pos: [4, 4] }]);
+    syncPair(left, right);
+    createNode(right.context, { type: 'rect', pos: [9, 9] });
+    expect(changes.map((change) => [change.local, change.authors])).toEqual([
+      [false, [11]],
+      [false, [11]],
+      [true, [22]],
+    ]);
+    expect(changes[0]?.origin).toBe(REMOTE_ORIGIN);
+    expect(changes[2]?.origin).toBe(right.history.origin);
+  });
+
+  it('reports no author for a remote deletion that creates nothing', () => {
+    const left = createClient(11);
+    const right = createClient(22);
+    const id = createNode(left.context, { type: 'rect', pos: [0, 0] });
+    syncPair(left, right);
+    const changes: GraphChange[] = [];
+    right.store.subscribe((_, change) => changes.push(change));
+    deleteNodes(left.context, [id]);
+    syncPair(left, right);
+    expect(changes.map((change) => change.authors)).toEqual([[]]);
   });
 
   it('keeps the identity of nodes that did not change', () => {

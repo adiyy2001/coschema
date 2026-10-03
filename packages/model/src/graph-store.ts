@@ -20,9 +20,24 @@ export interface GraphDelta {
   readonly addedEdges: readonly GraphEdge[];
   readonly updatedEdges: readonly GraphEdge[];
   readonly removedEdges: readonly EdgeId[];
+  readonly previousNodes: ReadonlyMap<NodeId, GraphNode>;
 }
 
-export type GraphListener = (delta: GraphDelta) => void;
+export interface GraphChange {
+  readonly origin: unknown;
+  readonly local: boolean;
+  readonly authors: readonly number[];
+}
+
+export type GraphListener = (delta: GraphDelta, change: GraphChange) => void;
+
+function authorsOf(transaction: Y.Transaction): number[] {
+  const authors: number[] = [];
+  for (const [clientId, clock] of transaction.afterState) {
+    if (clock > (transaction.beforeState.get(clientId) ?? 0)) authors.push(clientId);
+  }
+  return authors.sort((left, right) => left - right);
+}
 
 function sameRecord(left: unknown, right: unknown): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
@@ -113,17 +128,23 @@ export class GraphStore {
     collectDirtyIds(events, getEdges(this.doc), this.dirtyEdges);
   };
 
-  private readonly onAfterTransaction = (): void => {
+  private readonly onAfterTransaction = (transaction: Y.Transaction): void => {
     if (this.dirtyNodes.size === 0 && this.dirtyEdges.size === 0) return;
     const delta = this.process();
     if (delta === undefined) return;
-    for (const listener of [...this.listeners]) listener(delta);
+    const change: GraphChange = {
+      origin: transaction.origin,
+      local: transaction.local,
+      authors: authorsOf(transaction),
+    };
+    for (const listener of [...this.listeners]) listener(delta, change);
   };
 
   private process(): GraphDelta | undefined {
     const addedNodes: GraphNode[] = [];
     const updatedNodes: GraphNode[] = [];
     const removedNodes: NodeId[] = [];
+    const previousNodes = new Map<NodeId, GraphNode>();
     const edgesToCheck = new Set<EdgeId>(this.dirtyEdges);
     const nodes = getNodes(this.doc);
     for (const id of this.dirtyNodes) {
@@ -132,6 +153,7 @@ export class GraphStore {
       if (!(yNode instanceof Y.Map)) {
         if (previous === undefined) continue;
         this.nodeRecords.delete(id);
+        previousNodes.set(id, previous);
         removedNodes.push(id);
         this.collectIncident(id, edgesToCheck);
         continue;
@@ -143,6 +165,7 @@ export class GraphStore {
         this.collectIncident(id, edgesToCheck);
       } else if (!sameRecord(previous, next)) {
         this.nodeRecords.set(id, next);
+        previousNodes.set(id, previous);
         updatedNodes.push(next);
         if (previous.type !== next.type) this.collectIncident(id, edgesToCheck);
       }
@@ -159,7 +182,7 @@ export class GraphStore {
         0;
     if (!changed) return undefined;
     this.cachedGraph = undefined;
-    return { addedNodes, updatedNodes, removedNodes, ...edgeChanges };
+    return { addedNodes, updatedNodes, removedNodes, previousNodes, ...edgeChanges };
   }
 
   private collectIncident(nodeId: NodeId, into: Set<EdgeId>): void {
