@@ -21,7 +21,7 @@
     "bench:geometry": "tsx bench/geometry/main.ts",
     "bench:size": "tsx bench/size/main.ts",
     "build": "pnpm -r --if-present build",
-    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build",
+    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm test:sim && pnpm build",
     "bench:latency": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/latency/main.ts",
     "lighthouse": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/lighthouse/main.ts",
     "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts",

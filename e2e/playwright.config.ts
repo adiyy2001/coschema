@@ -10,7 +10,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env['CI']),
   retries: 0,
-  reporter: [['list']],
+  reporter: process.env['CI']
+    ? [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]]
+    : [['list']],
   use: {
     baseURL: `http://127.0.0.1:${E2E_PORT}`,
     trace: 'retain-on-failure',
