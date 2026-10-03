@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-10-03T17:09:29.176Z",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.21.0"
+  },
+  "postgres": "postgres (PostgreSQL) 18.6",
+  "configuration": {
+    "store": "postgres",
+    "rooms": 50,
+    "clientsPerRoom": 10,
+    "clients": 500,
+    "generatorWorkers": 4,
+    "targetOpsPerSecondPerClient": 4,
+    "warmupSeconds": 4,
+    "windows": 5,
+    "windowSeconds": 6,
+    "batchWindowMs": 50
+  },
+  "results": {
+    "operations": 60079,
+    "opsPerSecond": 1992.83,
+    "serverAppliedOpsPerSecond": 2001.76,
+    "deliveries": 540790,
+    "deliveriesPerSecond": 17938.12,
+    "latencyMs": {
+      "description": "from the write in one client to the observer callback in another client of the same room",
+      "p50": 1.62,
+      "p95": 9.34,
+      "p99": 25.8,
+      "mean": 2.88,
+      "max": 55.9
+    },
+    "acknowledgementMs": {
+      "description": "from the first unacknowledged write of a client to its persistence ack",
+      "samples": 60133,
+      "p50": 46.95,
+      "p95": 66.16,
+      "p99": 103.28,
+      "max": 231.54
+    },
+    "windows": [
+      {
+        "seconds": 6.01,
+        "operations": 11968,
+        "opsPerSecond": 1992.96,
+        "deliveries": 107739,
+        "deliveryP50Ms": 1.59,
+        "deliveryP95Ms": 7.64,
+        "deliveryP99Ms": 35.91,
+        "serverCpuPercent": 83.26,
+        "serverRssMiB": 154.02,
+        "generatorBusiestWorker": 0.474
+      },
+      {
+        "seconds": 6,
+        "operations": 11962,
+        "opsPerSecond": 1992.05,
+        "deliveries": 107613,
+        "deliveryP50Ms": 2.67,
+        "deliveryP95Ms": 20.49,
+        "deliveryP99Ms": 39.37,
+        "serverCpuPercent": 90.26,
+        "serverRssMiB": 207.3,
+        "generatorBusiestWorker": 0.538
+      },
+      {
+        "seconds": 6.01,
+        "operations": 12040,
+        "opsPerSecond": 2004.37,
+        "deliveries": 108469,
+        "deliveryP50Ms": 1.87,
+        "deliveryP95Ms": 5.73,
+        "deliveryP99Ms": 11.68,
+        "serverCpuPercent": 84.57,
+        "serverRssMiB": 209.96,
+        "generatorBusiestWorker": 0.513
+      },
+      {
+        "seconds": 6,
+        "operations": 12099,
+        "opsPerSecond": 2015.66,
+        "deliveries": 108900,
+        "deliveryP50Ms": 1.94,
+        "deliveryP95Ms": 6.42,
+        "deliveryP99Ms": 9.69,
+        "serverCpuPercent": 84.13,
+        "serverRssMiB": 210.11,
+        "generatorBusiestWorker": 0.504
+      },
+      {
+        "seconds": 6.01,
+        "operations": 12010,
+        "opsPerSecond": 1998.54,
+        "deliveries": 108069,
+        "deliveryP50Ms": 0.47,
+        "deliveryP95Ms": 3.65,
+        "deliveryP99Ms": 15.05,
+        "serverCpuPercent": 46.59,
+        "serverRssMiB": 210.43,
+        "generatorBusiestWorker": 0.246
+      }
+    ],
+    "p95SpreadMs": {
+      "min": 3.65,
+      "max": 20.49
+    },
+    "convergedRooms": 50,
+    "rooms": 50,
+    "disconnects": 0,
+    "denials": 0,
+    "server": {
+      "cpuPercentOfOneCore": 78.02,
+      "rssMiB": 210.43,
+      "peakRssMiB": 210.43,
+      "counters": {
+        "updates_applied_total": 68967,
+        "batches_flushed_total": 23117,
+        "bytes_persisted_total": 2647101,
+        "compactions_total": 0,
+        "auth_failures_total": 0,
+        "persistence_errors_total": 0,
+        "connections_total": 500,
+        "rooms_loaded_total": 50,
+        "rooms_unloaded_total": 0,
+        "rooms": 50,
+        "connections": 500
+      }
+    },
+    "loadGenerator": {
+      "processCpuPercentOfOneCore": 185.7,
+      "busiestWorkerEventLoopUtilization": 0.538,
+      "worstEventLoopDelayP99Ms": 14.14
+    }
+  },
+  "notes": [
+    "The load generator runs in worker threads of one Node process, each worker owning whole rooms. Its event loop utilization is reported next to the latency, so a saturated generator is visible.",
+    "The server runs as a separate process on the same machine. The numbers describe this machine and this run only."
+  ]
+}
