@@ -21,6 +21,7 @@
     "bench:geometry": "tsx bench/geometry/main.ts",
     "build": "pnpm -r --if-present build",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build",
+    "bench:latency": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/latency/main.ts",
     "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts",
     "test:e2e": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && pnpm --filter @coschema/e2e exec playwright test"
   },

@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-10-03T21:50:26.778Z",
+  "revision": "8747527",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.21.0"
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "153.0.8010.12",
+    "headless": true
+  },
+  "method": "Two browser contexts in one room on localhost. The writer drags a node by 40 px with the mouse. The clock starts at the pointerup that commits the move and stops when a mutation observer in the reader sees the transform of that node change. Both pages read Date.now() on the same machine.",
+  "targetP95Ms": 200,
+  "results": [
+    {
+      "store": "memory",
+      "edits": 200,
+      "warmupEdits": 10,
+      "latencyMs": {
+        "samples": 200,
+        "mean": 14.23,
+        "p50": 14,
+        "p95": 15,
+        "p99": 16,
+        "max": 22
+      },
+      "share": {
+        "under50": 1,
+        "under100": 1,
+        "under200": 1
+      },
+      "meetsTarget": true
+    },
+    {
+      "store": "postgres",
+      "postgres": "postgres (PostgreSQL) 18.6",
+      "edits": 200,
+      "warmupEdits": 10,
+      "latencyMs": {
+        "samples": 200,
+        "mean": 14.28,
+        "p50": 14,
+        "p95": 15,
+        "p99": 16,
+        "max": 27
+      },
+      "share": {
+        "under50": 1,
+        "under100": 1,
+        "under200": 1
+      },
+      "meetsTarget": true
+    }
+  ]
+}
