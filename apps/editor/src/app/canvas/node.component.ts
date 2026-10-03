@@ -7,24 +7,15 @@ import {
   inject,
   input,
 } from '@angular/core';
-import type { NodeId, NodeType } from '@coschema/model';
+import type { NodeId } from '@coschema/model';
 import { KeyboardController } from '../a11y/keyboard-controller';
 import { nodeName, shapeName } from '../a11y/describe-change';
 import { DocumentSession } from '../core/document-session';
 import { SelectionState } from '../interaction/selection-state';
-import { fitLabel } from './fit-label';
+import { DEFAULT_FONT_SIZE, ROUNDED_RADIUS, diamondPoints, fittedLabel } from './node-shape';
 import { ViewportState } from './viewport-state';
 
-const DEFAULT_FONT_SIZE = 14;
-const LABEL_PADDING = 10;
-const ROUNDED_RADIUS = 10;
 const RING_GAP = 6;
-const LABEL_WIDTH_FACTORS: Readonly<Record<NodeType, number>> = {
-  rect: 1,
-  rounded: 1,
-  ellipse: 0.8,
-  diamond: 0.62,
-};
 
 @Component({
   selector: 'g[cs-node]',
@@ -175,15 +166,11 @@ export class NodeComponent {
   });
   protected readonly labelText = computed(() => {
     const current = this.node();
-    if (current === undefined) return '';
-    const usable = current.size[0] * LABEL_WIDTH_FACTORS[current.type] - LABEL_PADDING * 2;
-    return fitLabel(current.label, usable, this.fontSize());
+    return current === undefined ? '' : fittedLabel(current);
   });
   protected readonly diamondPoints = computed(() => {
     const current = this.node();
-    if (current === undefined) return '';
-    const [width, height] = current.size;
-    return `${width / 2},0 ${width},${height / 2} ${width / 2},${height} 0,${height / 2}`;
+    return current === undefined ? '' : diamondPoints(current.size);
   });
 
   constructor() {
