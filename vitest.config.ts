@@ -26,6 +26,7 @@ export default defineConfig({
       reporter: ['text-summary', 'json-summary', 'lcov'],
       thresholds: {
         'packages/model/src/**': coreLogic,
+        'packages/geometry/src/**': coreLogic,
         'packages/sync/src/**': coreLogic,
         'packages/sim/src/**': coreLogic,
         'apps/server/src/**': everythingElse,

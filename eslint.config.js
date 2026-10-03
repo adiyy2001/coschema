@@ -59,7 +59,12 @@ export default tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
   {
-    files: ['packages/model/src/**/*.ts', 'packages/sync/src/**/*.ts', 'packages/sim/src/**/*.ts'],
+    files: [
+      'packages/model/src/**/*.ts',
+      'packages/geometry/src/**/*.ts',
+      'packages/sync/src/**/*.ts',
+      'packages/sim/src/**/*.ts',
+    ],
     ignores: ['packages/sim/src/cli.ts', 'packages/sim/src/report.ts', 'packages/sim/src/bin.ts'],
     rules: {
       'no-restricted-properties': ['error', ...nondeterminismBan],
