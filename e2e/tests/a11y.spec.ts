@@ -29,7 +29,7 @@ function liveRegion(page: Page): Locator {
 }
 
 test.describe('accessibility @a11y', () => {
-  test('works from the keyboard alone: focus, move, edit, connect, undo @a11y', async ({
+  test('works from the keyboard alone: focus, move, edit, connect, undo @a11y @must-have', async ({
     page,
   }, testInfo) => {
     await openEditor(page);
@@ -120,7 +120,7 @@ test.describe('accessibility @a11y', () => {
     await expect(page).toHaveTitle('Live demo | coschema');
   });
 
-  test('exposes the diagram to assistive technology @a11y', async ({ page }) => {
+  test('exposes the diagram to assistive technology @a11y @must-have', async ({ page }) => {
     await openEditor(page);
     await expect(page.getByRole('toolbar', { name: 'Editor tools' })).toBeVisible();
     await expect(
@@ -156,7 +156,7 @@ test.describe('accessibility @a11y', () => {
     );
   });
 
-  test('keeps colour from being the only signal: each person has a name and a pattern @a11y', async ({
+  test('keeps colour from being the only signal: each person has a name and a pattern @a11y @must-have', async ({
     browser,
   }) => {
     const room = uniqueRoom('a11y-people');
@@ -171,7 +171,9 @@ test.describe('accessibility @a11y', () => {
     await bartek.context.close();
   });
 
-  test('announces a remote move politely and names who did it @a11y', async ({ browser }) => {
+  test('announces a remote move politely and names who did it @a11y @must-have', async ({
+    browser,
+  }) => {
     const room = uniqueRoom('a11y-live');
     const anna = await joinRoom(browser, room, 'Anna');
     const bartek = await joinRoom(browser, room, 'Bartek');

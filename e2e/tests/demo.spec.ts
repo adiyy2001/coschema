@@ -52,7 +52,7 @@ async function dragIn(
 }
 
 test.describe('demo page @demo', () => {
-  test('shows two editors with the same starter diagram and their network controls @demo', async ({
+  test('shows two editors with the same starter diagram and their network controls @demo @must-have', async ({
     page,
   }, testInfo) => {
     await openDemo(page);
@@ -70,7 +70,9 @@ test.describe('demo page @demo', () => {
     await expect(pane(page, 'Cleo').locator('[data-node-id]')).toHaveCount(7);
   });
 
-  test('moves a node in one editor and shows it in the other @demo', async ({ page }) => {
+  test('moves a node in one editor and shows it in the other @demo @must-have', async ({
+    page,
+  }) => {
     await openDemo(page);
     await dragIn(page, pane(page, 'Ada'), 'intake', 120, 80);
     await expect
@@ -78,7 +80,7 @@ test.describe('demo page @demo', () => {
       .toBe((await positionsIn(pane(page, 'Ada')))['intake']);
   });
 
-  test('merges edits made on both sides of an offline link and converges @demo', async ({
+  test('merges edits made on both sides of an offline link and converges @demo @must-have', async ({
     page,
   }, testInfo) => {
     await openDemo(page);
@@ -104,7 +106,7 @@ test.describe('demo page @demo', () => {
     await page.screenshot({ path: testInfo.outputPath('demo-merged.png'), fullPage: true });
   });
 
-  test('the sliders change how messages are delivered @demo', async ({ page }) => {
+  test('the sliders change how messages are delivered @demo @must-have', async ({ page }) => {
     await openDemo(page);
     const ada = pane(page, 'Ada');
     const bruno = pane(page, 'Bruno');

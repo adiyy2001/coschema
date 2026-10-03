@@ -17,13 +17,13 @@ test.describe('editor @single', () => {
     await openEditor(page);
   });
 
-  test('renders the starter diagram @single', async ({ page }, testInfo) => {
+  test('renders the starter diagram @single @must-have', async ({ page }, testInfo) => {
     await expect(page.locator('.status')).toHaveText('7 nodes, 7 edges');
     await expect(node(page, 'pump-a')).toContainText('Pump A');
     await page.screenshot({ path: testInfo.outputPath('starter.png') });
   });
 
-  test('creates a node with a shape tool @single', async ({ page }, testInfo) => {
+  test('creates a node with a shape tool @single @must-have', async ({ page }, testInfo) => {
     await page.locator('[data-tool="ellipse"]').click();
     const spot = await emptySpot(page);
     await page.mouse.click(spot.x, spot.y);
@@ -33,7 +33,7 @@ test.describe('editor @single', () => {
     await page.screenshot({ path: testInfo.outputPath('created.png') });
   });
 
-  test('drags a node and snaps it to the grid @single', async ({ page }) => {
+  test('drags a node and snaps it to the grid @single @must-have', async ({ page }) => {
     const target = node(page, 'intake');
     const before = await worldPosition(target);
     const center = await centerOf(target);
@@ -45,7 +45,7 @@ test.describe('editor @single', () => {
     await expect(page.locator('[data-action="undo"]')).toBeEnabled();
   });
 
-  test('selects several nodes with shift @single', async ({ page }) => {
+  test('selects several nodes with shift @single @must-have', async ({ page }) => {
     await node(page, 'intake').click();
     await node(page, 'pump-a').click({ modifiers: ['Shift'] });
     await expect(page.locator('[data-node-id].selected')).toHaveCount(2);
@@ -53,7 +53,7 @@ test.describe('editor @single', () => {
     await expect(page.locator('[data-node-id].selected')).toHaveCount(1);
   });
 
-  test('selects with a marquee @single', async ({ page }, testInfo) => {
+  test('selects with a marquee @single @must-have', async ({ page }, testInfo) => {
     const surface = await page.locator('svg.surface').boundingBox();
     if (surface === null) throw new Error('no surface');
     const start = { x: surface.x + 20, y: surface.y + 20 };
@@ -68,7 +68,7 @@ test.describe('editor @single', () => {
     await expect(page.locator('[data-node-id].selected')).toHaveCount(5);
   });
 
-  test('connects two nodes from a port @single', async ({ page }, testInfo) => {
+  test('connects two nodes from a port @single @must-have', async ({ page }, testInfo) => {
     await node(page, 'alarm').click();
     const port = await eastPortOf(node(page, 'alarm'));
     const target = await centerOf(node(page, 'outlet'));
@@ -82,7 +82,7 @@ test.describe('editor @single', () => {
     await expect(page.locator('g[cs-edge].selected')).toHaveCount(1);
   });
 
-  test('edits a label inline @single', async ({ page }, testInfo) => {
+  test('edits a label inline @single @must-have', async ({ page }, testInfo) => {
     await node(page, 'pump-b').dblclick();
     const field = page.getByLabel('Node label');
     await expect(field).toBeVisible();
@@ -97,7 +97,7 @@ test.describe('editor @single', () => {
     await expect(node(page, 'pump-b')).toContainText('Pump B');
   });
 
-  test('pans with the hand tool and with the wheel @single', async ({ page }) => {
+  test('pans with the hand tool and with the wheel @single @must-have', async ({ page }) => {
     const target = node(page, 'tank');
     const before = await boxOf(target);
     await page.locator('[data-tool="hand"]').click();
@@ -112,7 +112,9 @@ test.describe('editor @single', () => {
     await expect.poll(async () => (await boxOf(target)).y).toBeLessThan(panned.y);
   });
 
-  test('zooms around the pointer with ctrl wheel and the toolbar @single', async ({ page }) => {
+  test('zooms around the pointer with ctrl wheel and the toolbar @single @must-have', async ({
+    page,
+  }) => {
     expect(await zoomPercent(page)).toBe(100);
     const anchor = await centerOf(node(page, 'check'));
     await page.mouse.move(anchor.x, anchor.y);
@@ -129,7 +131,7 @@ test.describe('editor @single', () => {
     expect(await zoomPercent(page)).toBe(80);
   });
 
-  test('pinch zooms with two touches over CDP @single', async ({ browser }) => {
+  test('pinch zooms with two touches over CDP @single @must-have', async ({ browser }) => {
     const context = await browser.newContext({
       hasTouch: true,
       viewport: { width: 1280, height: 800 },
@@ -158,7 +160,9 @@ test.describe('editor @single', () => {
     await context.close();
   });
 
-  test('undoes and redoes with the toolbar and the keyboard @single', async ({ page }) => {
+  test('undoes and redoes with the toolbar and the keyboard @single @must-have', async ({
+    page,
+  }) => {
     const target = node(page, 'alarm');
     const before = await worldPosition(target);
     const center = await centerOf(target);

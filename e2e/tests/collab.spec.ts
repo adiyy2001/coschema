@@ -20,7 +20,7 @@ function p95(samples: readonly number[]): number {
 }
 
 test.describe('collaboration @collab', () => {
-  test('shows an edit from one browser in the other within the latency budget @collab', async ({
+  test('shows an edit from one browser in the other within the latency budget @collab @must-have', async ({
     browser,
   }, testInfo) => {
     const room = uniqueRoom('latency');
@@ -39,7 +39,7 @@ test.describe('collaboration @collab', () => {
     await bartek.context.close();
   });
 
-  test('merges edits made offline in both browsers after they reconnect @collab', async ({
+  test('merges edits made offline in both browsers after they reconnect @collab @must-have', async ({
     browser,
   }, testInfo) => {
     const room = uniqueRoom('offline');
@@ -76,7 +76,9 @@ test.describe('collaboration @collab', () => {
     await bartek.context.close();
   });
 
-  test('keeps offline edits across a reload and sends them later @collab', async ({ browser }) => {
+  test('keeps offline edits across a reload and sends them later @collab @must-have', async ({
+    browser,
+  }) => {
     const room = uniqueRoom('reload');
     const anna = await joinRoom(browser, room, 'Anna');
     const bartek = await joinRoom(browser, room, 'Bartek');
@@ -99,7 +101,9 @@ test.describe('collaboration @collab', () => {
     await bartek.context.close();
   });
 
-  test('shows the other person cursor and selection @collab', async ({ browser }, testInfo) => {
+  test('shows the other person cursor and selection @collab @must-have', async ({
+    browser,
+  }, testInfo) => {
     const room = uniqueRoom('presence');
     const anna = await joinRoom(browser, room, 'Anna', { color: '#d6336c' });
     const bartek = await joinRoom(browser, room, 'Bartek', { color: '#1c7ed6' });
@@ -122,7 +126,7 @@ test.describe('collaboration @collab', () => {
     await bartek.context.close();
   });
 
-  test('follows the other person viewport until a manual pan @collab', async ({
+  test('follows the other person viewport until a manual pan @collab @must-have', async ({
     browser,
   }, testInfo) => {
     const room = uniqueRoom('follow');
@@ -152,7 +156,9 @@ test.describe('collaboration @collab', () => {
     await bartek.context.close();
   });
 
-  test('shows an access error for a rejected token @collab', async ({ browser }, testInfo) => {
+  test('shows an access error for a rejected token @collab @must-have', async ({
+    browser,
+  }, testInfo) => {
     const { context, page } = await newClient(browser, 'Mallory');
     await page.goto(roomUrl(uniqueRoom('denied'), 'not-a-token'));
     await expect(page.locator('[data-connection]')).toHaveAttribute('data-state', 'denied');
@@ -162,7 +168,7 @@ test.describe('collaboration @collab', () => {
     await context.close();
   });
 
-  test('loads the starter diagram once for a new room and shares later edits @collab', async ({
+  test('loads the starter diagram once for a new room and shares later edits @collab @must-have', async ({
     browser,
   }) => {
     const room = uniqueRoom('seed');
