@@ -38,6 +38,17 @@ services:
     networks:
       - coschema-net
 
+  editor:
+    build:
+      context: .
+      dockerfile: docker/editor.Dockerfile
+    depends_on:
+      - server
+    ports:
+      - '127.0.0.1:4280:8080'
+    networks:
+      - coschema-net
+
 volumes:
   coschema-pgdata:
 
