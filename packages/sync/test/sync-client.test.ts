@@ -225,6 +225,23 @@ describe('SyncClient pending count', () => {
     expect(labelsOf(harness.hub.doc)).toEqual({ a: '1', b: '2', c: '3' });
   });
 
+  it('starts from a pending count restored after a reload and clears it on the first ack', () => {
+    const harness = createHarness();
+    const client = harness.client({ initialPending: 4 });
+    expect(client.pendingCount).toBe(4);
+    setLabel(client.doc, 'a', '1');
+    expect(client.pendingCount).toBe(5);
+    client.start();
+    harness.network.settle();
+    expect(client.pendingCount).toBe(0);
+  });
+
+  it('treats a negative or fractional restored count as a whole number of at least zero', () => {
+    const harness = createHarness();
+    expect(harness.client({ initialPending: -3 }).pendingCount).toBe(0);
+    expect(harness.client({ initialPending: 2.9 }).pendingCount).toBe(2);
+  });
+
   it('holds the count while the hub has not persisted the update', async () => {
     const gate = deferred();
     const harness = createHarness({ onUpdate: () => gate.promise });

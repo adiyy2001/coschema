@@ -41,6 +41,7 @@ export interface SyncClientOptions {
   readonly awareness?: awarenessProtocol.Awareness;
   readonly backoff?: BackoffOptions;
   readonly awarenessIntervalMs?: number;
+  readonly initialPending?: number;
   readonly ackTimeoutMs?: number;
   readonly connectTimeoutMs?: number;
   readonly onError?: (error: unknown) => void;
@@ -87,6 +88,7 @@ export class SyncClient {
     this.awarenessIntervalMs = options.awarenessIntervalMs ?? DEFAULT_AWARENESS_INTERVAL_MS;
     this.ackTimeoutMs = options.ackTimeoutMs ?? DEFAULT_ACK_TIMEOUT_MS;
     this.connectTimeoutMs = options.connectTimeoutMs ?? DEFAULT_CONNECT_TIMEOUT_MS;
+    this.localSeq = Math.max(0, Math.floor(options.initialPending ?? 0));
     this.doc.on('update', this.onDocUpdate);
     this.awareness.on('update', this.onAwarenessUpdate);
   }
