@@ -12,8 +12,8 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "check:licenses": "tsx scripts/licenses.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit && pnpm -r --if-present typecheck",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest run && pnpm --filter @coschema/editor test",
+    "test:coverage": "vitest run --coverage && pnpm --filter @coschema/editor test:coverage",
     "test:integration": "vitest run --config apps/server/vitest.integration.config.ts --coverage",
     "test:sim": "vitest run --project sim test/property.test.ts",
     "sim": "tsx packages/sim/src/bin.ts",
@@ -21,7 +21,8 @@
     "bench:geometry": "tsx bench/geometry/main.ts",
     "build": "pnpm -r --if-present build",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build",
-    "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts"
+    "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts",
+    "test:e2e": "pnpm --filter @coschema/editor build && pnpm --filter @coschema/e2e exec playwright test"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
