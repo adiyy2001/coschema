@@ -7,10 +7,10 @@ import { routePath } from './route-path';
 describe('detailForZoom', () => {
   it('switches level at the documented zoom thresholds', () => {
     expect(detailForZoom(1)).toBe('full');
-    expect(detailForZoom(0.5)).toBe('full');
-    expect(detailForZoom(0.49)).toBe('simple');
-    expect(detailForZoom(0.2)).toBe('simple');
-    expect(detailForZoom(0.19)).toBe('minimal');
+    expect(detailForZoom(0.7)).toBe('full');
+    expect(detailForZoom(0.69)).toBe('simple');
+    expect(detailForZoom(0.25)).toBe('simple');
+    expect(detailForZoom(0.24)).toBe('minimal');
   });
 });
 

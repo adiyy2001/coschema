@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-03T17:45:09.353Z",
-  "revision": "08bde32",
+  "generatedAt": "2026-10-03T21:28:10.347Z",
+  "revision": "cf680e6",
   "hardware": {
     "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
     "cores": 20,
@@ -21,10 +21,16 @@
   "options": {
     "nodes": 5000,
     "zooms": [
+      1,
+      0.75,
+      0.5,
+      0.35,
+      0.25,
+      0.2,
       0.1,
       0.05
     ],
-    "runs": 2,
+    "runs": 3,
     "durationMs": 4000,
     "port": 4319,
     "output": "pan",
@@ -34,11 +40,356 @@
   "frameBudgetMs": 16.67,
   "zooms": [
     {
+      "zoom": 1,
+      "nodesInDom": 99,
+      "edgesInDom": 149,
+      "svgElements": 605,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    },
+    {
+      "zoom": 0.75,
+      "nodesInDom": 121,
+      "edgesInDom": 185,
+      "svgElements": 743,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    },
+    {
+      "zoom": 0.5,
+      "nodesInDom": 182,
+      "edgesInDom": 279,
+      "svgElements": 932,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 59.7,
+          "frameMs": {
+            "samples": 229,
+            "mean": 16.74,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 33.3
+          },
+          "overBudgetShare": 0.0044,
+          "droppedShare": 0.0044,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 59.7
+    },
+    {
+      "zoom": 0.35,
+      "nodesInDom": 358,
+      "edgesInDom": 545,
+      "svgElements": 1815,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    },
+    {
+      "zoom": 0.25,
+      "nodesInDom": 579,
+      "edgesInDom": 890,
+      "svgElements": 2947,
+      "runs": [
+        {
+          "fps": 59.7,
+          "frameMs": {
+            "samples": 229,
+            "mean": 16.74,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 33.4
+          },
+          "overBudgetShare": 0.0044,
+          "droppedShare": 0.0044,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 59.7,
+          "frameMs": {
+            "samples": 229,
+            "mean": 16.74,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 33.4
+          },
+          "overBudgetShare": 0.0044,
+          "droppedShare": 0.0044,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 59.7,
+          "frameMs": {
+            "samples": 229,
+            "mean": 16.74,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 33.3
+          },
+          "overBudgetShare": 0.0044,
+          "droppedShare": 0.0044,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 59.7,
+      "worstFps": 59.7
+    },
+    {
+      "zoom": 0.2,
+      "nodesInDom": 0,
+      "edgesInDom": 0,
+      "svgElements": 11,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 231,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 229,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    },
+    {
       "zoom": 0.1,
       "nodesInDom": 0,
       "edgesInDom": 0,
-      "svgElements": 10,
+      "svgElements": 11,
       "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
         {
           "fps": 60,
           "frameMs": {
@@ -77,8 +428,23 @@
       "zoom": 0.05,
       "nodesInDom": 0,
       "edgesInDom": 0,
-      "svgElements": 10,
+      "svgElements": 11,
       "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 231,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
         {
           "fps": 60,
           "frameMs": {

@@ -13,7 +13,7 @@ export interface PanOptions {
 
 export const DEFAULT_PAN_OPTIONS: PanOptions = {
   nodes: 5000,
-  zooms: [1, 0.5, 0.35, 0.1],
+  zooms: [1, 0.75, 0.5, 0.35, 0.25, 0.2, 0.1, 0.05],
   runs: 3,
   durationMs: 4000,
   port: 4319,

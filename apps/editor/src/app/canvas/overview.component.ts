@@ -3,7 +3,6 @@ import type { Rect } from '@coschema/geometry';
 import { DocumentSession } from '../core/document-session';
 import { SelectionState } from '../interaction/selection-state';
 import { linesPath, rectsPath } from './overview';
-import { ViewportState } from './viewport-state';
 
 @Component({
   selector: 'g[cs-overview]',
@@ -36,25 +35,22 @@ import { ViewportState } from './viewport-state';
 })
 export class OverviewComponent {
   private readonly session = inject(DocumentSession);
-  private readonly viewport = inject(ViewportState);
   private readonly selection = inject(SelectionState);
 
-  private readonly visibleNodeRects = computed(() => {
+  protected readonly nodesPath = computed(() => {
     const graph = this.session.graph;
     graph.revision();
     const rects: Rect[] = [];
-    for (const entry of graph.nodeGrid.queryWindow(this.viewport.window())) rects.push(entry.rect);
-    return rects;
+    for (const entry of graph.nodeGrid.all()) rects.push(entry.rect);
+    return rectsPath(rects);
   });
-
-  protected readonly nodesPath = computed(() => rectsPath(this.visibleNodeRects()));
 
   protected readonly edgesPath = computed(() => {
     const graph = this.session.graph;
     graph.revision();
     const pairs: (readonly [Rect, Rect])[] = [];
-    for (const id of graph.edgeIdsInWindow(this.viewport.window())) {
-      const edge = graph.peekEdge(id);
+    for (const entry of graph.edgeGrid.all()) {
+      const edge = graph.peekEdge(entry.id);
       const source = edge === undefined ? undefined : graph.nodeGrid.rectOf(edge.source);
       const target = edge === undefined ? undefined : graph.nodeGrid.rectOf(edge.target);
       if (source !== undefined && target !== undefined) pairs.push([source, target]);
