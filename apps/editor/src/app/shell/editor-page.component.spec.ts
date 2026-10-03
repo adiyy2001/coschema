@@ -10,6 +10,7 @@ import { SelectionState } from '../interaction/selection-state';
 import { pointerEvent, settle, stubLayout } from '../testing/dom';
 import { ManualFrames } from '../testing/manual-frames';
 import { mulberry32 } from '../core/bench-scene';
+import { FILE_SAVER } from '../export/export-service';
 import { EditorPageComponent } from './editor-page.component';
 
 interface Page {
@@ -23,10 +24,26 @@ interface Page {
   readonly viewport: ViewportState;
 }
 
+interface SavedFile {
+  readonly fileName: string;
+  readonly blob: Blob;
+}
+
+const savedFiles: SavedFile[] = [];
+
 async function mount(): Promise<Page> {
   const frames = new ManualFrames();
+  savedFiles.length = 0;
   TestBed.configureTestingModule({
     providers: [
+      {
+        provide: FILE_SAVER,
+        useValue: {
+          save: (blob: Blob, fileName: string) => {
+            savedFiles.push({ blob, fileName });
+          },
+        },
+      },
       { provide: FRAME_SCHEDULER, useValue: frames.schedule },
       { provide: RANDOM, useValue: mulberry32(11) },
     ],
@@ -401,5 +418,39 @@ describe('EditorPageComponent', () => {
     await settle(page.fixture);
     expect(positionOf(page, 'intake')).toEqual([80, 168]);
     expect(page.session.graph.peekNode('intake')?.pos).toEqual([80, 168]);
+  });
+
+  it('exports the diagram as SVG from the toolbar', async () => {
+    const button = page.root.querySelector('[data-action="export-svg"]');
+    if (!(button instanceof HTMLButtonElement)) throw new Error('missing export button');
+    expect(button.disabled).toBe(false);
+    button.click();
+    await settle(page.fixture);
+    expect(savedFiles).toHaveLength(1);
+    expect(savedFiles[0]?.fileName).toBe('coschema-diagram.svg');
+    const markup = (await savedFiles[0]?.blob.text()) ?? '';
+    expect(markup.match(/data-node-id=/gu)).toHaveLength(7);
+    expect(markup.match(/data-edge-id=/gu)).toHaveLength(7);
+    expect(page.root.querySelector('[data-live-region]')?.textContent).toContain(
+      'Exported the diagram as an SVG file.',
+    );
+  });
+
+  it('disables the export buttons when there is nothing to export', async () => {
+    deleteNodes(page.session.context, [
+      'intake',
+      'pump-a',
+      'pump-b',
+      'check',
+      'tank',
+      'alarm',
+      'outlet',
+    ]);
+    page.frames.tick();
+    await settle(page.fixture);
+    for (const action of ['export-svg', 'export-png']) {
+      const button = page.root.querySelector(`[data-action="${action}"]`);
+      expect(button instanceof HTMLButtonElement && button.disabled).toBe(true);
+    }
   });
 });

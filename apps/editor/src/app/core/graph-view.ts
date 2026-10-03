@@ -28,6 +28,17 @@ import type * as Y from 'yjs';
 const EDGE_AREA_MARGIN = 12;
 const ROUTE_INVALIDATION_MARGIN = 16;
 
+export interface ExportEdge {
+  readonly id: EdgeId;
+  readonly points: readonly Vec2[];
+  readonly fallback: boolean;
+}
+
+export interface ExportScene {
+  readonly nodes: readonly GraphNode[];
+  readonly edges: readonly ExportEdge[];
+}
+
 export interface NodePosition {
   readonly id: NodeId;
   readonly pos: Vec2;
@@ -157,6 +168,18 @@ export class GraphView {
       }
     }
     return best;
+  }
+
+  exportScene(): ExportScene {
+    const graph = this.store.getGraph();
+    const edges: ExportEdge[] = [];
+    for (const edge of graph.edges) {
+      const route = this.routeOf(edge);
+      if (route !== undefined) {
+        edges.push({ id: edge.id, points: route.points, fallback: route.fallback });
+      }
+    }
+    return { nodes: [...graph.nodes].sort(compareNodes), edges };
   }
 
   contentBounds(): Rect | undefined {
@@ -311,23 +334,21 @@ export class GraphView {
 
   private computeRoute(id: EdgeId): void {
     const edge = this.edges.peek(id);
-    const source = edge === undefined ? undefined : this.nodeGrid.rectOf(edge.source);
-    const target = edge === undefined ? undefined : this.nodeGrid.rectOf(edge.target);
-    if (edge === undefined || source === undefined || target === undefined) {
-      this.routes.set(id, undefined);
-      return;
-    }
-    this.routes.set(
-      id,
-      this.routeCache.route(
-        id,
-        {
-          source: { id: edge.source, rect: source, port: edge.sourcePort },
-          target: { id: edge.target, rect: target, port: edge.targetPort },
-          waypoints: edge.waypoints,
-        },
-        this.nodeGrid,
-      ),
+    this.routes.set(id, edge === undefined ? undefined : this.routeOf(edge));
+  }
+
+  private routeOf(edge: GraphEdge): Route | undefined {
+    const source = this.nodeGrid.rectOf(edge.source);
+    const target = this.nodeGrid.rectOf(edge.target);
+    if (source === undefined || target === undefined) return undefined;
+    return this.routeCache.route(
+      edge.id,
+      {
+        source: { id: edge.source, rect: source, port: edge.sourcePort },
+        target: { id: edge.target, rect: target, port: edge.targetPort },
+        waypoints: edge.waypoints,
+      },
+      this.nodeGrid,
     );
   }
 

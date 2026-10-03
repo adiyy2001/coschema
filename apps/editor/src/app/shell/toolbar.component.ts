@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { KeyboardController } from '../a11y/keyboard-controller';
 import { ViewportState } from '../canvas/viewport-state';
 import { DocumentSession } from '../core/document-session';
+import { ExportService } from '../export/export-service';
 import { InteractionController } from '../interaction/controller';
 import { SelectionState } from '../interaction/selection-state';
 import type { Tool } from '../interaction/types';
@@ -39,6 +40,7 @@ const TOOLS: readonly ToolButton[] = [
   selector: 'cs-toolbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CollabStatusComponent, JoinDialogComponent],
+  providers: [ExportService],
   styles: `
     :host {
       display: block;
@@ -240,6 +242,34 @@ const TOOLS: readonly ToolButton[] = [
           </svg>
         </button>
       </div>
+      <div class="group" role="group" aria-label="Export">
+        <button
+          type="button"
+          data-action="export-svg"
+          aria-label="Export as SVG"
+          title="Export as SVG"
+          [disabled]="empty()"
+          (click)="exporter.exportSvg()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v10M8 10l4 4 4-4M5 19h14" />
+          </svg>
+          SVG
+        </button>
+        <button
+          type="button"
+          data-action="export-png"
+          aria-label="Export as PNG"
+          title="Export as PNG"
+          [disabled]="empty()"
+          (click)="exporter.exportPng()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v10M8 10l4 4 4-4M5 19h14" />
+          </svg>
+          PNG
+        </button>
+      </div>
       <div class="right">
         <button
           type="button"
@@ -269,6 +299,8 @@ export class ToolbarComponent {
   protected readonly session = inject(DocumentSession);
   protected readonly selection = inject(SelectionState);
   private readonly viewport = inject(ViewportState);
+  protected readonly exporter = inject(ExportService);
+  protected readonly empty = computed(() => this.session.graph.nodeCount() === 0);
   protected readonly history = this.session.historyState;
   protected readonly zoomLabel = computed(() => `${Math.round(this.viewport.zoom() * 100)}%`);
 }

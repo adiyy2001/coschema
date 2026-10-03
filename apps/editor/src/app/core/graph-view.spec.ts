@@ -210,6 +210,33 @@ describe('GraphView', () => {
     });
   });
 
+  describe('exportScene', () => {
+    it('returns every node in z order and a route for every edge, active or not', () => {
+      fixture = setup(twoNodes);
+      const scene = fixture.view.exportScene();
+      expect(scene.nodes.map((node) => node.id)).toEqual(['a', 'b']);
+      expect(scene.edges).toHaveLength(1);
+      expect(fixture.view.peekRoute('e')).toBeUndefined();
+      const first = scene.edges[0];
+      expect(first?.id).toBe('e');
+      expect(first?.points.length).toBeGreaterThanOrEqual(2);
+      expect(first?.points[0]?.[0]).toBeCloseTo(100, 0);
+      expect(first?.points[first.points.length - 1]?.[0]).toBeCloseTo(400, 0);
+      expect(first?.fallback).toBe(false);
+    });
+
+    it('is empty for an empty diagram and follows later changes', () => {
+      fixture = setup();
+      expect(fixture.view.exportScene()).toEqual({ nodes: [], edges: [] });
+      twoNodes(fixture.context);
+      expect(fixture.view.exportScene().nodes).toHaveLength(2);
+      moveNodes(fixture.context, [{ id: 'b', pos: [800, 300] }]);
+      fixture.frames.tick();
+      const moved = fixture.view.exportScene();
+      expect(moved.edges[0]?.points[moved.edges[0].points.length - 1]?.[0]).toBeCloseTo(800, 0);
+    });
+  });
+
   describe('destroy', () => {
     it('cancels the pending frame and stops listening', () => {
       fixture = setup(twoNodes);
