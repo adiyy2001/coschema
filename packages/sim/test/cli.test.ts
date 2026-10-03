@@ -58,6 +58,16 @@ describe('sim CLI', () => {
     expect(err).toEqual(['1000/1001 seeds, 0 failed']);
   });
 
+  it('passes within the time budget and fails with its own exit code when over it', () => {
+    const within = harness();
+    expect(runCli(['--seeds', '3', '--budget', '10'], within.io)).toBe(0);
+    expect(within.err).toEqual([]);
+    const over = harness();
+    expect(runCli(['--seeds', '3', '--budget', '1'], over.io)).toBe(3);
+    expect(over.err).toEqual(['over budget: 2.0s is more than the 1s allowed']);
+    expect(over.written).toHaveLength(1);
+  });
+
   it('prints the trace hash for one seed and the same one on a second run', () => {
     const first = harness();
     const second = harness();
@@ -107,6 +117,7 @@ describe('sim CLI', () => {
     for (const argv of [
       ['--bogus'],
       ['--seeds', 'x'],
+      ['--seeds', '3', '--budget', 'soon'],
       ['--seed', '-3'],
       ['--seed', '1', '--inject', 'nope'],
       [],

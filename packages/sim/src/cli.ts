@@ -4,6 +4,7 @@ import {
   EMPTY_STATS,
   addStats,
   formatFailure,
+  formatDuration,
   formatSingleRun,
   formatSummary,
   type SeedFailure,
@@ -22,11 +23,12 @@ export interface CliIo {
 }
 
 export const DEFAULT_RESULTS_PATH = 'bench/results/sim.json';
+export const OVER_BUDGET_EXIT_CODE = 3;
 const MAX_PRINTED_FAILURES = 10;
 const PROGRESS_EVERY = 1000;
 
 const USAGE = [
-  'usage: pnpm sim --seeds <count> [--from <seed>] [--out <file>]',
+  'usage: pnpm sim --seeds <count> [--from <seed>] [--out <file>] [--budget <seconds>]',
   '       pnpm sim --seed <seed> [--verbose]',
   '       add --inject lose-log or --inject zombie to prove the simulator catches a bug',
 ].join('\n');
@@ -37,6 +39,7 @@ interface Options {
   readonly from: number;
   readonly verbose: boolean;
   readonly out: string;
+  readonly budgetSeconds: number | undefined;
   readonly storm: boolean;
   readonly faults: Faults;
 }
@@ -72,6 +75,7 @@ function parseOptions(argv: readonly string[]): Options {
       from: { type: 'string' },
       verbose: { type: 'boolean', default: false },
       out: { type: 'string' },
+      budget: { type: 'string' },
       'no-storm': { type: 'boolean', default: false },
       inject: { type: 'string' },
     },
@@ -83,6 +87,7 @@ function parseOptions(argv: readonly string[]): Options {
     from: parseCount('--from', values.from) ?? 1,
     verbose: values.verbose,
     out: values.out ?? DEFAULT_RESULTS_PATH,
+    budgetSeconds: parseCount('--budget', values.budget),
     storm: !values['no-storm'],
     faults: parseFaults(values.inject),
   };
@@ -96,6 +101,15 @@ function runSingle(options: Options, seed: number, io: CliIo): number {
   });
   for (const line of formatSingleRun(result, options.verbose)) io.out(line);
   return result.ok ? 0 : 1;
+}
+
+function withinBudget(options: Options, durationMs: number, io: CliIo): boolean {
+  if (options.budgetSeconds === undefined || durationMs <= options.budgetSeconds * 1000)
+    return true;
+  io.err(
+    `over budget: ${formatDuration(durationMs)} is more than the ${options.budgetSeconds}s allowed`,
+  );
+  return false;
 }
 
 function runMany(options: Options, count: number, io: CliIo): number {
@@ -135,7 +149,8 @@ function runMany(options: Options, count: number, io: CliIo): number {
   }
   io.out(formatSummary(report));
   io.writeJson(options.out, report);
-  return failedSeeds.length === 0 ? 0 : 1;
+  if (failedSeeds.length > 0) return 1;
+  return withinBudget(options, durationMs, io) ? 0 : OVER_BUDGET_EXIT_CODE;
 }
 
 export function runCli(argv: readonly string[], io: CliIo): number {
