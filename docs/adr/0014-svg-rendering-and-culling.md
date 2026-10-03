@@ -26,3 +26,4 @@ The brief requires an own SVG renderer, no diagram library, and 60 fps panning w
 
 - Elements outside the window do not exist in the DOM, so find-in-page and screen reader browse mode do not see them. The keyboard model (ADR 0016) works from the store, not from the DOM, and brings the focused node into view.
 - The benchmark numbers (frame times, hardware, browser) come from `bench/` and are the only source for the README claim.
+- The grid returns the nodes of a query in no particular order, because sorting the hits cost more than the query itself. The editor orders by z anyway. `bench:geometry` compares every query with a linear scan: the grid is several times faster at normal zoom, and a plain scan of 5,000 rectangles is as fast once a few hundred nodes are in view. Both take well under a frame, so the grid is there for the stable window, not for raw speed.
