@@ -65,12 +65,12 @@ export async function startServerProcess(options: ServerProcessOptions): Promise
 
 async function waitForListening(server: ServerProcess): Promise<void> {
   const deadline = Date.now() + 20_000;
-  let exitedEarly = false;
+  const state = { exitedEarly: false };
   void server.exited.then(() => {
-    exitedEarly = true;
+    state.exitedEarly = true;
   });
   while (!server.logs.some((line) => line.includes('"message":"listening"'))) {
-    if (exitedEarly) throw new Error(`the server exited at startup:\n${server.logs.join('\n')}`);
+    if (state.exitedEarly) throw new Error(`the server exited at startup:\n${server.logs.join('\n')}`);
     if (Date.now() > deadline)
       throw new Error(`the server did not start:\n${server.logs.join('\n')}`);
     await new Promise((resolve) => setTimeout(resolve, 20));

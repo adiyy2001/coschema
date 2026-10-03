@@ -207,12 +207,12 @@ describe('PostgresStore', () => {
     const updates = collect(editor);
     const id = editor.addNode('busy');
     for (let step = 0; step < 80; step += 1) editor.move(id, step, step);
-    let writing = true;
+    const state = { writing: true };
     const compactor = (async () => {
-      while (writing) await store.compact('stress-room');
+      while (state.writing) await store.compact('stress-room');
     })();
     for (const update of updates) await store.append('stress-room', update);
-    writing = false;
+    state.writing = false;
     await compactor;
     const loaded = await store.load('stress-room');
     const restored = rebuild(loaded.snapshot, loaded.updates);

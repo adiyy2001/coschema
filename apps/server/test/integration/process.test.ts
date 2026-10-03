@@ -157,7 +157,7 @@ describe('the production bundle', () => {
     expect(await countRows(database, 'doc_updates', 'unacked-room')).toBe(0);
     expect(anna.client.pendingCount).toBeGreaterThan(0);
 
-    const second = await launch({ COSCHEMA_PORT: String(new URL(first.httpUrl).port) });
+    const second = await launch({ COSCHEMA_PORT: new URL(first.httpUrl).port });
     await until(
       () => anna.client.isSynced && anna.client.pendingCount === 0,
       'Anna to resend and be acked',
