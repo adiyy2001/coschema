@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-10-03T22:48:04.283Z",
+  "revision": "0f78a1a",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.21.0"
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "153.0.8010.12",
+    "headless": true
+  },
+  "lighthouse": "13.5.0",
+  "category": "accessibility",
+  "minimumScore": 95,
+  "results": [
+    {
+      "path": "/",
+      "formFactor": "desktop",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    },
+    {
+      "path": "/",
+      "formFactor": "mobile",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    },
+    {
+      "path": "/r/test",
+      "formFactor": "desktop",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    },
+    {
+      "path": "/r/test",
+      "formFactor": "mobile",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    },
+    {
+      "path": "/demo",
+      "formFactor": "desktop",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    },
+    {
+      "path": "/demo",
+      "formFactor": "mobile",
+      "score": 100,
+      "failed": [],
+      "meetsTarget": true
+    }
+  ]
+}
