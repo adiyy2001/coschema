@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-10-03T23:03:28.391Z",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.21.0"
+  },
+  "options": {
+    "sizes": [
+      100,
+      1000,
+      5000
+    ],
+    "seed": 20261003,
+    "store": "postgres",
+    "output": "size"
+  },
+  "scenes": [
+    {
+      "nodes": 93,
+      "edges": 113,
+      "updates": 711,
+      "before": {
+        "rows": 711,
+        "bytes": 47367,
+        "loadMs": 14.61
+      },
+      "after": {
+        "rows": 1,
+        "bytes": 28620,
+        "loadMs": 4.81
+      },
+      "encodedStateBytes": 28620,
+      "encodedStateGzipBytes": 6777,
+      "graphJsonBytes": 20062,
+      "compactionMs": 16.42,
+      "bytesRatio": 1.66,
+      "loadedNodes": 93
+    },
+    {
+      "nodes": 951,
+      "edges": 1292,
+      "updates": 7338,
+      "before": {
+        "rows": 7338,
+        "bytes": 563434,
+        "loadMs": 84.53
+      },
+      "after": {
+        "rows": 1,
+        "bytes": 349802,
+        "loadMs": 19.83
+      },
+      "encodedStateBytes": 349802,
+      "encodedStateGzipBytes": 69191,
+      "graphJsonBytes": 238621,
+      "compactionMs": 68.87,
+      "bytesRatio": 1.61,
+      "loadedNodes": 951
+    },
+    {
+      "nodes": 4743,
+      "edges": 6633,
+      "updates": 36551,
+      "before": {
+        "rows": 36551,
+        "bytes": 3296131,
+        "loadMs": 292.75
+      },
+      "after": {
+        "rows": 1,
+        "bytes": 2189831,
+        "loadMs": 93.4
+      },
+      "encodedStateBytes": 2189831,
+      "encodedStateGzipBytes": 333257,
+      "graphJsonBytes": 1592644,
+      "compactionMs": 342.18,
+      "bytesRatio": 1.51,
+      "loadedNodes": 4743
+    }
+  ]
+}

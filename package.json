@@ -19,6 +19,7 @@
     "sim": "tsx packages/sim/src/bin.ts",
     "bench:load": "pnpm --filter @coschema/server build && tsx bench/load/main.ts",
     "bench:geometry": "tsx bench/geometry/main.ts",
+    "bench:size": "tsx bench/size/main.ts",
     "build": "pnpm -r --if-present build",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build",
     "bench:latency": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/latency/main.ts",

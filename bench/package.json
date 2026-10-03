@@ -10,9 +10,11 @@
     "@coschema/geometry": "workspace:*",
     "@coschema/model": "workspace:*",
     "@coschema/sync": "workspace:*",
+    "pg": "8.23.1",
     "yjs": "13.6.33"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
+    "@playwright/test": "1.63.0",
+    "@types/pg": "8.23.1"
   }
 }
