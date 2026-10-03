@@ -82,7 +82,24 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/**/*.ts', 'packages/*/test/**/*.ts'],
+    files: ['apps/server/src/rooms/**/*.ts', 'apps/server/src/persistence/**/*.ts'],
+    rules: {
+      'no-restricted-properties': ['error', ...nondeterminismBan],
+    },
+  },
+  {
+    files: [
+      'apps/server/src/main.ts',
+      'apps/server/src/server.ts',
+      'apps/*/test/**/*.ts',
+      'bench/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.ts', 'packages/*/test/**/*.ts', 'apps/*/test/**/*.ts', 'bench/**/*.ts'],
     rules: {
       'no-console': 'off',
     },
