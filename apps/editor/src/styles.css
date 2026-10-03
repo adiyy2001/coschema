@@ -65,7 +65,7 @@ body {
   padding: 10px 14px;
   border-radius: 6px;
   background: var(--cs-accent);
-  color: #ffffff;
+  color: var(--cs-canvas);
   font-weight: 600;
   text-decoration: none;
   transform: translateY(-200%);

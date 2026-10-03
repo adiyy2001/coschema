@@ -226,6 +226,9 @@ importers:
       '@coschema/model':
         specifier: workspace:*
         version: link:../../packages/model
+      '@coschema/sim':
+        specifier: workspace:*
+        version: link:../../packages/sim
       '@coschema/sync':
         specifier: workspace:*
         version: link:../../packages/sync

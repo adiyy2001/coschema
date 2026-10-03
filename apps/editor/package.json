@@ -18,6 +18,7 @@
     "@angular/router": "22.2.1",
     "@coschema/geometry": "workspace:*",
     "@coschema/model": "workspace:*",
+    "@coschema/sim": "workspace:*",
     "@coschema/sync": "workspace:*",
     "rxjs": "7.8.2",
     "tslib": "2.8.1",
