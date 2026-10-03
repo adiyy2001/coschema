@@ -7,3 +7,4 @@ export * from './messages';
 export * from './room-hub';
 export * from './sync-client';
 export * from './transport';
+export * from './websocket-transport';
