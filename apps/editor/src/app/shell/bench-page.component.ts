@@ -5,6 +5,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { ViewportState } from '../canvas/viewport-state';
 import { benchSeed } from '../core/bench-scene';
 import { DOCUMENT_SEED, DocumentSession } from '../core/document-session';
+import { InteractionController } from '../interaction/controller';
 import { SelectionState } from '../interaction/selection-state';
 
 const DEFAULT_BENCH_NODES = 5000;
@@ -18,6 +19,7 @@ const BENCH_MARGIN = 40;
     DocumentSession,
     ViewportState,
     SelectionState,
+    InteractionController,
     {
       provide: DOCUMENT_SEED,
       useFactory: () => {
