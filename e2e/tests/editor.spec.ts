@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import {
   boxOf,
   centerOf,
@@ -185,5 +186,38 @@ test.describe('editor @single', () => {
     await expect.poll(() => counts(page)).toEqual({ nodes: 6, edges: 6 });
     await page.keyboard.press('Control+z');
     await expect.poll(() => counts(page)).toEqual({ nodes: 7, edges: 7 });
+  });
+
+  test('exports the diagram as SVG and as PNG @single', async ({ page, browser }, testInfo) => {
+    const svgDownload = page.waitForEvent('download');
+    await page.locator('[data-action="export-svg"]').click();
+    const svgFile = await svgDownload;
+    expect(svgFile.suggestedFilename()).toBe('coschema-diagram.svg');
+    const svgPath = testInfo.outputPath('diagram.svg');
+    await svgFile.saveAs(svgPath);
+    const markup = readFileSync(svgPath, 'utf8');
+    expect(markup.match(/data-node-id=/gu)).toHaveLength(7);
+    expect(markup.match(/data-edge-id=/gu)).toHaveLength(7);
+    expect(markup).toContain('Pump A');
+    const size = /width="(\d+)" height="(\d+)"/u.exec(markup);
+    const width = Number(size?.[1]);
+    const height = Number(size?.[2]);
+
+    const pngDownload = page.waitForEvent('download');
+    await page.locator('[data-action="export-png"]').click();
+    const pngFile = await pngDownload;
+    expect(pngFile.suggestedFilename()).toBe('coschema-diagram.png');
+    const pngPath = testInfo.outputPath('diagram.png');
+    await pngFile.saveAs(pngPath);
+    const png = readFileSync(pngPath);
+    expect([...png.subarray(0, 8)]).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    expect(png.readUInt32BE(16)).toBe(width * 2);
+    expect(png.readUInt32BE(20)).toBe(height * 2);
+    await expect(page.locator('[data-live-region]')).toContainText('Exported the diagram as a PNG');
+
+    const viewer = await browser.newPage({ viewport: { width, height } });
+    await viewer.goto(`file://${svgPath}`);
+    await viewer.screenshot({ path: testInfo.outputPath('exported-svg.png') });
+    await viewer.close();
   });
 });
