@@ -70,7 +70,8 @@ async function waitForListening(server: ServerProcess): Promise<void> {
     state.exitedEarly = true;
   });
   while (!server.logs.some((line) => line.includes('"message":"listening"'))) {
-    if (state.exitedEarly) throw new Error(`the server exited at startup:\n${server.logs.join('\n')}`);
+    if (state.exitedEarly)
+      throw new Error(`the server exited at startup:\n${server.logs.join('\n')}`);
     if (Date.now() > deadline)
       throw new Error(`the server did not start:\n${server.logs.join('\n')}`);
     await new Promise((resolve) => setTimeout(resolve, 20));
