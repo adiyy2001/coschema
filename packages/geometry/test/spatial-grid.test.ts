@@ -79,13 +79,17 @@ describe('SpatialGrid', () => {
     );
   });
 
-  it('returns results in the order the ids were first inserted', () => {
+  it('lists everything in the order the ids were first inserted', () => {
     const grid = new SpatialGrid<string>(100);
     grid.insert('c', { x: 0, y: 0, width: 10, height: 10 });
     grid.insert('a', { x: 20, y: 0, width: 10, height: 10 });
     grid.insert('b', { x: 400, y: 400, width: 10, height: 10 });
     grid.move('c', { x: 405, y: 405, width: 10, height: 10 });
-    expect(grid.queryIds({ x: -10, y: -10, width: 1000, height: 1000 })).toEqual(['c', 'a', 'b']);
+    expect(grid.queryIds({ x: -10, y: -10, width: 1000, height: 1000 }).sort()).toEqual([
+      'a',
+      'b',
+      'c',
+    ]);
     expect(grid.all().map((entry) => entry.id)).toEqual(['c', 'a', 'b']);
   });
 

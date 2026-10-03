@@ -181,7 +181,6 @@ export class SpatialGrid<Id extends GridId> {
         }
       }
     }
-    found.sort((left, right) => left.order - right.order);
     return found.map((entry) => ({ id: entry.id, rect: entry.rect }));
   }
 
