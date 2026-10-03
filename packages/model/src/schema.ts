@@ -1,4 +1,4 @@
-import type * as Y from 'yjs';
+import * as Y from 'yjs';
 import type { EdgeId, NodeId } from './ids';
 import type { NodeType, PortId, Size, Vec2 } from './node-types';
 
@@ -86,4 +86,9 @@ export function initializeDocument(doc: Y.Doc, origin: unknown = null): void {
 export function readSchemaVersion(doc: Y.Doc): number | undefined {
   const version = getMeta(doc).get(META_KEYS.schemaVersion);
   return typeof version === 'number' ? version : undefined;
+}
+
+export function getLabelText(doc: Y.Doc, id: NodeId): Y.Text | undefined {
+  const label = getNodes(doc).get(id)?.get(NODE_KEYS.label);
+  return label instanceof Y.Text ? label : undefined;
 }

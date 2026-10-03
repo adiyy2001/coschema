@@ -12,6 +12,7 @@ import {
   editLabel,
   findViolations,
   getEdges,
+  getLabelText,
   getNodes,
   moveNodes,
   reorderNode,
@@ -209,6 +210,15 @@ describe('labels', () => {
     editLabel(client.context, id, 'Pump 4');
     expect(deltas).toHaveLength(1);
     expect(labelOf(client, id)).toBe('Pump 4');
+  });
+
+  it('exposes the shared text of a label', () => {
+    const client = createClient(1);
+    const id = createNode(client.context, { type: 'rect', pos: [0, 0], label: 'Pump 3' });
+    expect(getLabelText(client.doc, id)?.toJSON()).toBe('Pump 3');
+    expect(getLabelText(client.doc, 'missing')).toBeUndefined();
+    getNodes(client.doc).get(id)?.delete(NODE_KEYS.label);
+    expect(getLabelText(client.doc, id)).toBeUndefined();
   });
 
   it('ignores unknown nodes and nodes without a label text', () => {
