@@ -295,12 +295,13 @@ export class InteractionController {
     if (id !== undefined) this.selection.set({ nodes: [], edges: [id] });
   }
 
-  private createNodeAt(
+  createNodeAt(
     nodeType: Extract<Effect, { kind: 'createNode' }>['nodeType'],
     position: Vec2,
-  ): void {
+  ): NodeId {
     const id = createNode(this.session.context, { type: nodeType, pos: position });
     this.selection.set({ nodes: [id], edges: [] });
     this.tool.set('select');
+    return id;
   }
 }

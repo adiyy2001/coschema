@@ -1,7 +1,7 @@
 import type { ProviderToken } from '@angular/core';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { createNode } from '@coschema/model';
+import { createNode, moveNodes } from '@coschema/model';
 import {
   RoomHub,
   SyncClient,
@@ -448,6 +448,29 @@ describe('RoomPageComponent', () => {
     await settle(room.fixture);
     expect(room.opened).toEqual([]);
     expect(room.injected(Collaboration).identity().name).toBe('Marta');
+    room.restore();
+  });
+
+  it('announces what a remote person changed in the live region, and nothing for the first sync', async () => {
+    const room = await mountRoom();
+    const remote = await room.remote('Bob', '#1c7ed6');
+    const region = room.root.querySelector('[data-live-region]');
+    await until(room, () => {
+      expect(room.root.querySelectorAll('[data-action="follow"]')).toHaveLength(1);
+    });
+    expect(region?.textContent.trim()).toBe('');
+    moveNodes({ doc: remote.doc, origin: 'remote-test', random: mulberry32(5) }, [
+      { id: 'pump-a', pos: [640, 520] },
+    ]);
+    await vi.waitFor(
+      async () => {
+        await room.pump();
+        room.frames.tick();
+        expect(region?.textContent).toContain('Bob moved');
+        expect(region?.textContent).toContain('Pump A');
+      },
+      { timeout: 3000, interval: 25 },
+    );
     room.restore();
   });
 });

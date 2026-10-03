@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { A11Y_PROVIDERS } from '../a11y/a11y-providers';
+import { LiveRegionComponent } from '../a11y/live-region.component';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { ViewportState } from '../canvas/viewport-state';
 import { COLLAB_TARGET, Collaboration } from '../collab/collaboration';
@@ -22,12 +24,13 @@ export function targetFromRoute(): ConnectionTarget {
 @Component({
   selector: 'cs-room-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CanvasComponent, ToolbarComponent],
+  imports: [CanvasComponent, LiveRegionComponent, ToolbarComponent],
   providers: [
     DocumentSession,
     ViewportState,
     SelectionState,
     InteractionController,
+    ...A11Y_PROVIDERS,
     { provide: DOCUMENT_BOOTSTRAP, useValue: 'deferred' },
     { provide: DOCUMENT_SEED, useValue: starterDiagram },
     { provide: COLLAB_TARGET, useFactory: targetFromRoute },
@@ -44,11 +47,13 @@ export function targetFromRoute(): ConnectionTarget {
     .stage {
       flex: 1;
       min-height: 0;
+      outline: none;
     }
   `,
   template: `
     <cs-toolbar />
-    <main class="stage"><cs-canvas /></main>
+    <main id="main" class="stage" tabindex="-1"><cs-canvas /></main>
+    <cs-live-region />
   `,
 })
 export class RoomPageComponent {}

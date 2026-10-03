@@ -5,6 +5,14 @@ import { RouterOutlet } from '@angular/router';
   selector: 'cs-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet],
-  template: '<router-outlet />',
+  template: `
+    <a class="skip-link" href="#main" (click)="skipToMain($event)">Skip to the main content</a>
+    <router-outlet />
+  `,
 })
-export class App {}
+export class App {
+  protected skipToMain(event: Event): void {
+    event.preventDefault();
+    globalThis.document.getElementById('main')?.focus();
+  }
+}

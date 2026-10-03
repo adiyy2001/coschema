@@ -7,15 +7,20 @@ import {
   computed,
   effect,
   inject,
+  Injector,
+  untracked,
   viewChild,
 } from '@angular/core';
 import type { Vec2 } from '@coschema/geometry';
+import { KeyboardController } from '../a11y/keyboard-controller';
+import { ShortcutsDialogComponent } from '../a11y/shortcuts-dialog.component';
+import { readingOrder } from '../a11y/ordering';
 import { Collaboration } from '../collab/collaboration';
 import { DocumentSession } from '../core/document-session';
 import { InteractionController } from '../interaction/controller';
-import { SelectionState } from '../interaction/selection-state';
 import { CursorsLayerComponent } from '../presence/cursors-layer.component';
 import { PresenceLayerComponent } from '../presence/presence-layer.component';
+import { CanvasIds } from './canvas-ids';
 import { EdgeComponent } from './edge.component';
 import { LabelEditorComponent } from './label-editor.component';
 import { NodeComponent } from './node.component';
@@ -29,7 +34,6 @@ const POINTER_FOCUS: FocusOptions & { focusVisible: boolean } = {
 };
 const GRID_SPACING = 24;
 const GRID_MIN_ZOOM = 0.4;
-const MODIFIER_UNDO_KEYS = new Set(['z', 'Z']);
 
 function sameIds(left: readonly string[], right: readonly string[]): boolean {
   return left.length === right.length && left.every((id, index) => id === right[index]);
@@ -46,7 +50,9 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
     OverlayComponent,
     OverviewComponent,
     PresenceLayerComponent,
+    ShortcutsDialogComponent,
   ],
+  providers: [CanvasIds],
   host: {
     '[class.panning]': 'panning()',
     '[class.grab]': 'grabbing()',
@@ -99,7 +105,8 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
       class="surface"
       role="application"
       aria-label="Diagram canvas"
-      tabindex="0"
+      [attr.aria-describedby]="ids.hint"
+      [attr.tabindex]="keyboard.tabStop() === undefined ? 0 : -1"
       (pointerdown)="onPointerDown($event)"
       (pointermove)="onPointerMove($event)"
       (pointerup)="onPointerUp($event)"
@@ -113,7 +120,7 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
     >
       <defs>
         <marker
-          id="cs-arrow"
+          [attr.id]="ids.arrow"
           viewBox="0 0 10 10"
           refX="9"
           refY="5"
@@ -124,7 +131,7 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
           <path class="arrow" d="M0 1 L10 5 L0 9 Z" />
         </marker>
         <pattern
-          id="cs-grid"
+          [attr.id]="ids.grid"
           [attr.width]="gridSpacing"
           [attr.height]="gridSpacing"
           patternUnits="userSpaceOnUse"
@@ -134,7 +141,7 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
         </pattern>
       </defs>
       @if (showGrid()) {
-        <rect width="100%" height="100%" fill="url(#cs-grid)" />
+        <rect width="100%" height="100%" [attr.fill]="ids.gridReference" />
       }
       <g [attr.transform]="viewport.transform()">
         @if (viewport.detail() === 'minimal') {
@@ -158,18 +165,25 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
         <g cs-overlay></g>
       </g>
     </svg>
-    <cs-label-editor (closed)="focusSurface()" />
+    <p class="sr-only" [attr.id]="ids.hint">
+      Press N to move through nodes, Alt with an arrow key to jump to a neighbour, C to connect,
+      Enter to edit a label, and the question mark for all shortcuts.
+    </p>
+    <cs-label-editor (closed)="keyboard.restoreFocus()" />
+    <cs-shortcuts-dialog />
   `,
 })
 export class CanvasComponent {
   protected readonly gridSpacing = GRID_SPACING;
   protected readonly viewport = inject(ViewportState);
   protected readonly controller = inject(InteractionController);
+  protected readonly keyboard = inject(KeyboardController);
+  protected readonly ids = inject(CanvasIds);
   private readonly session = inject(DocumentSession);
-  private readonly selection = inject(SelectionState);
   protected readonly collaboration = inject(Collaboration, { optional: true });
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly surface = viewChild.required<ElementRef<SVGSVGElement>>('surface');
+  private readonly injector = inject(Injector);
   private spaceHeld = false;
 
   protected readonly showGrid = computed(() => this.viewport.zoom() >= GRID_MIN_ZOOM);
@@ -182,15 +196,23 @@ export class CanvasComponent {
   protected readonly moveCursor = computed(() => this.controller.hoverHit() === 'node');
   protected readonly visibleNodeIds = computed(
     () => {
-      this.session.graph.revision();
-      return this.session.graph.nodeIdsInWindow(this.viewport.window());
+      const graph = this.session.graph;
+      graph.revision();
+      const ids = graph.nodeIdsInWindow(this.viewport.window());
+      const focus = this.keyboard.focus();
+      if (focus?.kind !== 'node' || ids.includes(focus.id)) return ids;
+      return graph.peekNode(focus.id) === undefined ? ids : [...ids, focus.id];
     },
     { equal: sameIds },
   );
   protected readonly visibleEdgeIds = computed(
     () => {
-      this.session.graph.revision();
-      return this.session.graph.edgeIdsInWindow(this.viewport.window());
+      const graph = this.session.graph;
+      graph.revision();
+      const ids = graph.edgeIdsInWindow(this.viewport.window());
+      const focus = this.keyboard.focus();
+      if (focus?.kind !== 'edge' || ids.includes(focus.id)) return ids;
+      return graph.peekEdge(focus.id) === undefined ? ids : [...ids, focus.id];
     },
     { equal: sameIds },
   );
@@ -200,6 +222,24 @@ export class CanvasComponent {
     effect(() => {
       this.session.graph.activate(
         this.viewport.detail() === 'minimal' ? [] : this.visibleEdgeIds(),
+      );
+    });
+    effect(() => {
+      const nodes = this.visibleNodeIds();
+      const focus = this.keyboard.focus();
+      const minimal = this.viewport.detail() === 'minimal';
+      untracked(() => {
+        this.keyboard.tabStop.set(minimal ? undefined : this.pickTabStop(nodes, focus));
+      });
+    });
+    effect(() => {
+      const request = this.keyboard.focusRequest();
+      if (request === undefined) return;
+      afterNextRender(
+        () => {
+          this.focusRequested(request.target);
+        },
+        { injector: this.injector },
       );
     });
     afterNextRender(() => {
@@ -278,48 +318,40 @@ export class CanvasComponent {
   }
 
   protected onKeyDown(event: KeyboardEvent): void {
-    const modifier = event.ctrlKey || event.metaKey;
     if (event.key === ' ') {
       this.spaceHeld = true;
       event.preventDefault();
       return;
     }
-    if (modifier && MODIFIER_UNDO_KEYS.has(event.key)) {
-      event.preventDefault();
-      if (event.shiftKey) this.controller.redo();
-      else this.controller.undo();
-      return;
-    }
-    if (modifier && (event.key === 'y' || event.key === 'Y')) {
-      event.preventDefault();
-      this.controller.redo();
-      return;
-    }
-    switch (event.key) {
-      case 'Delete':
-      case 'Backspace':
-        event.preventDefault();
-        this.controller.deleteSelection();
-        return;
-      case 'Enter':
-      case 'F2':
-        event.preventDefault();
-        this.controller.editSelectedLabel();
-        return;
-      case 'Escape':
-        this.controller.dispatch({ type: 'cancel' });
-        this.controller.setTool('select');
-        this.selection.clear();
-        return;
-    }
+    if (this.keyboard.handleKey(event)) event.preventDefault();
   }
 
   protected onKeyUp(event: KeyboardEvent): void {
     if (event.key === ' ') this.spaceHeld = false;
   }
 
-  protected focusSurface(): void {
-    this.surface().nativeElement.focus({ preventScroll: true });
+  private pickTabStop(
+    nodes: readonly string[],
+    focus: ReturnType<KeyboardController['focus']>,
+  ): string | undefined {
+    if (focus?.kind === 'node' && nodes.includes(focus.id)) return focus.id;
+    const graph = this.session.graph;
+    const placed = nodes.flatMap((id) => {
+      const rect = graph.nodeGrid.rectOf(id);
+      return rect === undefined ? [] : [{ id, rect }];
+    });
+    return readingOrder(placed)[0];
+  }
+
+  private focusRequested(target: ReturnType<KeyboardController['focus']> | 'surface'): void {
+    const surface = this.surface().nativeElement;
+    if (target === 'surface' || target === undefined) {
+      surface.focus({ preventScroll: true });
+      return;
+    }
+    const attribute = target.kind === 'node' ? 'data-node-id' : 'data-edge-id';
+    const element = surface.querySelector<SVGGElement>(`[${attribute}="${CSS.escape(target.id)}"]`);
+    (element ?? surface).focus({ preventScroll: true });
   }
 
   private screenOf(event: MouseEvent): Vec2 {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { KeyboardController } from '../a11y/keyboard-controller';
 import { ViewportState } from '../canvas/viewport-state';
 import { DocumentSession } from '../core/document-session';
 import { InteractionController } from '../interaction/controller';
@@ -137,6 +138,17 @@ const TOOLS: readonly ToolButton[] = [
           </button>
         }
       </div>
+      <div class="group" role="group" aria-label="Add">
+        <button
+          type="button"
+          data-action="add-node"
+          aria-label="Add a node"
+          title="Add a node in the middle of the view"
+          (click)="keyboard.addNode()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11v10H4zM19 5v6M16 8h6" /></svg>
+        </button>
+      </div>
       <div class="group" role="group" aria-label="History">
         <button
           type="button"
@@ -229,6 +241,17 @@ const TOOLS: readonly ToolButton[] = [
         </button>
       </div>
       <div class="right">
+        <button
+          type="button"
+          data-action="shortcuts"
+          aria-label="Keyboard shortcuts"
+          title="Keyboard shortcuts (?)"
+          (click)="keyboard.helpOpen.set(true)"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 8h18v9H3zM7 12h.01M11 12h.01M15 12h.01M8 15h8" />
+          </svg>
+        </button>
         <p class="status" aria-live="off">
           {{ session.graph.nodeCount() }} nodes, {{ session.graph.edgeCount() }} edges
         </p>
@@ -242,6 +265,7 @@ export class ToolbarComponent {
   protected readonly tools = TOOLS;
   protected readonly joinOpen = signal(false);
   protected readonly controller = inject(InteractionController);
+  protected readonly keyboard = inject(KeyboardController);
   protected readonly session = inject(DocumentSession);
   protected readonly selection = inject(SelectionState);
   private readonly viewport = inject(ViewportState);

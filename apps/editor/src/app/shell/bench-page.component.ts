@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, afterNextRender } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { clampZoom } from '@coschema/geometry';
+import { A11Y_PROVIDERS } from '../a11y/a11y-providers';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { ViewportState } from '../canvas/viewport-state';
 import { benchSeed } from '../core/bench-scene';
@@ -20,6 +21,7 @@ const BENCH_MARGIN = 40;
     ViewportState,
     SelectionState,
     InteractionController,
+    ...A11Y_PROVIDERS,
     {
       provide: DOCUMENT_SEED,
       useFactory: () => {
@@ -36,8 +38,12 @@ const BENCH_MARGIN = 40;
       position: fixed;
       inset: 0;
     }
+    main {
+      height: 100%;
+      outline: none;
+    }
   `,
-  template: '<cs-canvas />',
+  template: '<main id="main" tabindex="-1"><cs-canvas /></main>',
 })
 export class BenchPageComponent {
   private readonly session = inject(DocumentSession);
