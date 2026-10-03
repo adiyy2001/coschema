@@ -1,4 +1,12 @@
-import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  afterNextRender,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { centerOn, rectCenter, rectContainsRect, snapToGrid, zoomAround } from '@coschema/geometry';
 import {
   DEFAULT_NODE_SIZES,
@@ -67,6 +75,7 @@ export class KeyboardController {
   private readonly selection = inject(SelectionState);
   private readonly interaction = inject(InteractionController);
   private readonly announcements = inject(Announcements);
+  private readonly injector = inject(Injector);
   private readonly burst = new MoveBurst(this.session.history, inject(COLLAB_CLOCK));
   private serial = 0;
 
@@ -122,6 +131,11 @@ export class KeyboardController {
   focusFallback(): void {
     const active = globalThis.document.activeElement;
     if (active !== null && active !== globalThis.document.body) return;
+    const stop = this.tabStop();
+    if (stop !== undefined && this.session.graph.peekNode(stop) !== undefined) {
+      this.focusNode(stop);
+      return;
+    }
     this.restoreFocus();
   }
 
@@ -421,7 +435,15 @@ export class KeyboardController {
     const gone =
       focus !== undefined &&
       (focus.kind === 'node' ? graph.peekNode(focus.id) : graph.peekEdge(focus.id)) === undefined;
-    if (gone) this.focus.set(undefined);
+    if (gone) {
+      this.focus.set(undefined);
+      afterNextRender(
+        () => {
+          this.focusFallback();
+        },
+        { injector: this.injector },
+      );
+    }
     const mode = this.mode();
     if (mode.kind === 'connect' && graph.peekNode(mode.sourceId) === undefined)
       this.cancelConnect();
