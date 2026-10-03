@@ -14,10 +14,12 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && pnpm -r --if-present typecheck",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config apps/server/vitest.integration.config.ts --coverage",
     "test:sim": "vitest run --project sim test/property.test.ts",
     "sim": "tsx packages/sim/src/bin.ts",
+    "bench:load": "pnpm --filter @coschema/server build && tsx bench/load/main.ts",
     "build": "pnpm -r --if-present build",
-    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm build"
+    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
