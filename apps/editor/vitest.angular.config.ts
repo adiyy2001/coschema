@@ -10,6 +10,7 @@ export default defineConfig({
         'src/app/presence/**': { lines: 90 },
         'src/app/a11y/**': { lines: 90 },
         'src/app/canvas/**': { lines: 80 },
+        'src/app/demo/**': { lines: 80 },
         'src/app/shell/**': { lines: 80 },
       },
     },
