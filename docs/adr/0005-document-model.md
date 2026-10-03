@@ -10,7 +10,7 @@ The brief fixes the outline: nodes in a `Y.Map` keyed by id, with position, size
 
 Root of the `Y.Doc`: `nodes` (`Y.Map` of `Y.Map`), `edges` (`Y.Map` of `Y.Map`) and `meta` (schema version).
 
-Node fields: `type`, `pos` (`[x, y]`), `size` (`[w, h]`), `z` (fractional key, ADR 0006), `style` (a small `Y.Map`, created on first use, so two people changing fill and stroke both win) and `label` (`Y.Text`).
+Node fields: `type`, `pos` (`[x, y]`), `size` (`[w, h]`), `z` (fractional key, ADR 0006), `style` (a small `Y.Map`, created together with the node and left empty, so two people changing fill and stroke both win) and `label` (`Y.Text`).
 
 Edge fields: `source`, `target`, `sourcePort`, `targetPort`, `waypoints` (only user-defined bends, atomic). Routed segments are computed in the view and never stored (ADR 0015).
 
@@ -29,6 +29,8 @@ I verified the delete behaviour against Yjs 13.6.33 on 2026-10-03: with a concur
 - Separate `x` and `y` keys: allows the torn positions described above.
 
 ## Consequences
+
+- The `style` map is created with the node on purpose. If it were created on first use, two people styling a fresh node at once would each create a map, one map would win and the other person's fill would be lost.
 
 - Observers must key everything by node id, never by the identity of the nested `Y.Map`: undo recreates the nested types as copies.
 - A person can lose a label edit if someone deletes the node at the same moment. I accept that.

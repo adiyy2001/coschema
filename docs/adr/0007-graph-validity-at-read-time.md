@@ -13,7 +13,8 @@ The `Y.Doc` is allowed to hold invalid data. Everything that renders or announce
 1. An edge is visible only if its source and target nodes exist and their ports exist on the node type.
 2. A self-loop is hidden.
 3. Nodes are ordered by `(z, id)` and ids are unique by construction (map keys).
-4. Sizes below the minimum are clamped when read.
+4. Sizes outside the allowed range are clamped when read.
+5. Anything else malformed is read defensively and never throws: an unknown node type reads as a rectangle, a bad position as the origin, a bad order key as the lowest one, and an edge with missing fields is hidden. A client from a newer or buggy version cannot crash the others.
 
 Local commands keep the document tidy on their own side: deleting a node deletes the edges attached to it in the same transaction. The cascade belongs to the person's own action, runs only for local edits and is a single undo step.
 
