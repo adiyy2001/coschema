@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export const E2E_PORT = 4317;
+export const SYNC_PORT = 4318;
 
 export default defineConfig({
   testDir: './tests',
