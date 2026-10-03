@@ -16,15 +16,16 @@ Envelope: every binary frame starts with a `varUint` message type, encoded with 
 | awareness | 1 | both | y-protocols awareness update |
 | auth | 2 | both | client to server: token (`varString`). Server to client: y-protocols permission denied with a reason. |
 | query awareness | 3 | client to server | asks for the current awareness states |
-| ack | 4 | server to client | the state vector the server has persisted |
+| ack | 4 | server to client | `{token, state vector}`: the server has persisted everything up to that vector |
+| flush | 5 | client to server | a marker `token`. The server answers with an ack carrying the same token once everything applied before the marker is persisted |
 
 Connection: `GET /rooms/:roomId` upgraded to WebSocket. The first frame must be an auth message within 5 seconds, or the socket closes with code 4401. The server verifies the token with `jose` (HS256, issuer `coschema`, audience `coschema`, 5 seconds of clock tolerance, `alg: none` rejected) and requires the `room` claim to equal the room in the path. Only after that does the server answer with sync step 1. Bad tokens never reach a room.
 
 Claims: `sub`, `name`, `color`, `room`, `exp`. The dev key comes from `COSCHEMA_JWT_SECRET`. Outside production a documented default is used, and the server refuses to start in production without one. `POST /dev/token` mints tokens when `COSCHEMA_DEV_TOKENS=1`, and the compose file turns it on.
 
-Acks: after the server persists an update batch it sends the state vector it has stored. The client removes every pending local update covered by that vector. The pending count in the UI is the number of local transactions not yet covered. After a page reload, the count is recomputed from the difference between the IndexedDB document and the last acknowledged state vector.
+Acks: the client counts local transactions with a sequence number. To learn what is safe it sends a flush marker after every local update and after every handshake reply that carries local changes, and the marker's token is the sequence number it covers. The hub answers with an ack as soon as its persistence callback has completed for everything it applied before the marker. If it already has nothing outstanding, it answers at once. The ack carries the marker's token and the persisted state vector, and the client drops every pending update up to the marker's sequence number. The pending count in the UI is `localSeq - ackedSeq`. A flush with no answer for the ack timeout (10 seconds by default) makes the client drop the connection and reconnect, because a connection that silently swallows markers is not delivering updates either. A hub whose persistence callback failed stops acknowledging and reports it. After a page reload, the count is recomputed from the difference between the IndexedDB document and the last acknowledged state vector.
 
-Awareness: the client sends its state at most every 50 ms (about 20 per second). The server relays awareness updates unchanged and drops the states of a connection when it closes.
+Awareness: the client sends its state at most every 50 ms (about 20 per second) and keeps the latest state while throttled. The hub relays awareness updates unchanged and, when a connection closes, removes only the client ids that connection controlled. There is no expiry timer: presence ends when the connection ends, which is deterministic in the simulator, and a client that goes quiet while its connection is open is simply still present. On every handshake the client bumps its own awareness clock twice before announcing itself (ADR 0019).
 
 ## Alternatives
 

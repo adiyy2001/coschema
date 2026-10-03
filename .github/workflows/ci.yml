@@ -29,3 +29,19 @@ jobs:
       - run: pnpm check:licenses
       - run: pnpm test:coverage
       - run: pnpm build
+
+  sim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: SIM_RUNS=500 pnpm test:sim
+      - run: pnpm sim --seeds 5000
+      - run: cat bench/results/sim.json
+        if: always()
