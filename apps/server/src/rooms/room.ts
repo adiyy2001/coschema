@@ -23,7 +23,7 @@ export interface RoomDependencies {
   readonly onFailure: (room: Room) => void;
 }
 
-export class PersistenceLostError extends Error {
+class PersistenceLostError extends Error {
   constructor(roomId: string) {
     super(`updates of room ${roomId} could not be written`);
     this.name = 'PersistenceLostError';

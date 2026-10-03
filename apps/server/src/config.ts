@@ -1,4 +1,4 @@
-export type StoreKind = 'memory' | 'postgres';
+type StoreKind = 'memory' | 'postgres';
 
 export interface Config {
   readonly host: string;

@@ -18,7 +18,7 @@ interface Probe {
   __editedAt?: number;
 }
 
-export async function armEditClock(page: Page): Promise<void> {
+async function armEditClock(page: Page): Promise<void> {
   await page.evaluate(() => {
     window.addEventListener(
       'pointerup',

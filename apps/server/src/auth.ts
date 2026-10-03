@@ -1,10 +1,10 @@
 import type { AuthResult } from '@coschema/sync';
 import { SignJWT, jwtVerify } from 'jose';
 
-export const TOKEN_ISSUER = 'coschema';
-export const TOKEN_AUDIENCE = 'coschema';
-export const TOKEN_ALGORITHM = 'HS256';
-export const CLOCK_TOLERANCE_SECONDS = 5;
+const TOKEN_ISSUER = 'coschema';
+const TOKEN_AUDIENCE = 'coschema';
+const TOKEN_ALGORITHM = 'HS256';
+const CLOCK_TOLERANCE_SECONDS = 5;
 export const DEFAULT_TOKEN_TTL_SECONDS = 3600;
 
 const COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/u;

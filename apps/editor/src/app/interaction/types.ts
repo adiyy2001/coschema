@@ -71,7 +71,7 @@ export interface WheelEvent {
   readonly pageSize: number;
 }
 
-export interface Cancel {
+interface Cancel {
   readonly type: 'cancel';
 }
 
@@ -107,7 +107,7 @@ export type Effect =
     }
   | { readonly kind: 'createNode'; readonly nodeType: NodeType; readonly position: Vec2 };
 
-export interface Pointer {
+interface Pointer {
   readonly id: number;
   readonly screen: Vec2;
 }
@@ -152,11 +152,11 @@ export interface Marquee extends Tracked {
   readonly lastKey: string;
 }
 
-export interface Pan extends Tracked {
+interface Pan extends Tracked {
   readonly mode: 'pan';
 }
 
-export interface Connect extends Tracked {
+interface Connect extends Tracked {
   readonly mode: 'connect';
   readonly sourceId: NodeId;
   readonly sourcePort: PortId;

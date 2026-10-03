@@ -1,7 +1,7 @@
 import type { EdgeId, GraphDelta, GraphNode, NodeId, NodeType } from '@coschema/model';
 import type { ChangeNote, ChangeSubject } from './announcer';
 
-export const MAX_NAME_LENGTH = 40;
+const MAX_NAME_LENGTH = 40;
 
 const SHAPE_NAMES: Readonly<Record<NodeType, string>> = {
   rect: 'rectangle',
@@ -20,7 +20,7 @@ export function nodeName(node: Pick<GraphNode, 'label' | 'type'>): string {
   return label.length > MAX_NAME_LENGTH ? `${label.slice(0, MAX_NAME_LENGTH - 1)}…` : label;
 }
 
-export function edgeName(sourceName: string, targetName: string): string {
+function edgeName(sourceName: string, targetName: string): string {
   return `${sourceName} to ${targetName}`;
 }
 

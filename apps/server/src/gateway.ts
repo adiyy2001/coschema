@@ -8,7 +8,7 @@ import type { RoomManager } from './rooms/room-manager';
 import { WsTransport } from './ws-transport';
 
 const ROOM_PATH_PATTERN = /^\/rooms\/([^/]+)$/u;
-export const DEFAULT_HEARTBEAT_MS = 30_000;
+const DEFAULT_HEARTBEAT_MS = 30_000;
 
 export interface GatewayOptions {
   readonly manager: RoomManager;

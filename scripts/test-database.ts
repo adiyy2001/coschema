@@ -4,8 +4,8 @@ import { promisify } from 'node:util';
 
 const run = promisify(execFile);
 
-export const TEST_DATABASE_CONTAINER = 'coschema-test-pg';
-export const TEST_DATABASE_IMAGE = 'postgres:18.6-alpine';
+const TEST_DATABASE_CONTAINER = 'coschema-test-pg';
+const TEST_DATABASE_IMAGE = 'postgres:18.6-alpine';
 const DATABASE_USER = 'coschema';
 const DATABASE_PASSWORD = 'coschema';
 const DATABASE_NAME = 'coschema';
@@ -59,7 +59,7 @@ async function waitUntilReady(): Promise<void> {
   }
 }
 
-export async function removeTestDatabase(): Promise<void> {
+async function removeTestDatabase(): Promise<void> {
   await docker('rm', '-f', TEST_DATABASE_CONTAINER).catch(() => undefined);
 }
 

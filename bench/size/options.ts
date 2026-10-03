@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
 
-export type SizeStore = 'postgres' | 'memory';
+type SizeStore = 'postgres' | 'memory';
 
 export interface SizeOptions {
   readonly sizes: readonly number[];

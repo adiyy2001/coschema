@@ -11,8 +11,8 @@ import type { Metrics } from '../metrics';
 import type { DocumentStore } from '../persistence/store';
 import { Room, type RoomSettings } from './room';
 
-export const CLOSE_GOING_AWAY = 1001;
-export const CLOSE_TRY_AGAIN_LATER = 1013;
+const CLOSE_GOING_AWAY = 1001;
+const CLOSE_TRY_AGAIN_LATER = 1013;
 
 export interface RoomManagerOptions {
   readonly store: DocumentStore;

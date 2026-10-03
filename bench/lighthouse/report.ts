@@ -1,7 +1,7 @@
 export const MIN_ACCESSIBILITY_SCORE = 95;
 export const LIGHTHOUSE_VERSION = '13.5.0';
 
-export interface FailedAudit {
+interface FailedAudit {
   readonly id: string;
   readonly title: string;
   readonly items: number;

@@ -50,7 +50,7 @@ export interface CollaborationOptions {
   readonly onError?: (error: unknown) => void;
 }
 
-export const DISK_NAME_PREFIX = 'coschema:room:';
+const DISK_NAME_PREFIX = 'coschema:room:';
 
 export function stateOf(snapshot: SyncSnapshot, manuallyOffline: boolean): ConnectionState {
   switch (snapshot.status) {

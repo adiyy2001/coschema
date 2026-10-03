@@ -19,7 +19,7 @@ export interface StaticServer {
   close(): Promise<void>;
 }
 
-export function resolveRequestPath(root: string, urlPath: string): string | undefined {
+function resolveRequestPath(root: string, urlPath: string): string | undefined {
   const decoded = decodeURIComponent(urlPath.split('?')[0] ?? '/');
   const candidate = resolve(join(root, normalize(decoded)));
   if (candidate !== root && !candidate.startsWith(`${root}/`)) return undefined;

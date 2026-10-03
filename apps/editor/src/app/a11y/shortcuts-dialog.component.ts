@@ -13,7 +13,7 @@ interface Shortcut {
   readonly action: string;
 }
 
-export const SHORTCUTS: readonly Shortcut[] = [
+const SHORTCUTS: readonly Shortcut[] = [
   { keys: ['Tab'], action: 'Move into the canvas and out of it again.' },
   { keys: ['N', 'P'], action: 'Focus the next or previous node, then the connections.' },
   { keys: ['Alt', 'Arrow keys'], action: 'Focus the nearest node in that direction.' },

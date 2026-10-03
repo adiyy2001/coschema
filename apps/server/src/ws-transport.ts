@@ -1,9 +1,9 @@
 import type { Transport, Unsubscribe } from '@coschema/sync';
 import { WebSocket, type RawData } from 'ws';
 
-export const CLOSE_UNSUPPORTED_DATA = 1003;
-export const CLOSE_OVERLOADED = 1013;
-export const MAX_BUFFERED_BYTES = 16 * 1024 * 1024;
+const CLOSE_UNSUPPORTED_DATA = 1003;
+const CLOSE_OVERLOADED = 1013;
+const MAX_BUFFERED_BYTES = 16 * 1024 * 1024;
 const MAX_CLOSE_REASON_BYTES = 120;
 
 type MessageHandler = (data: Uint8Array) => void;

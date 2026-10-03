@@ -14,7 +14,7 @@ export interface EdgeEnds {
 
 export type Direction = 'left' | 'right' | 'up' | 'down';
 
-export const READING_ROW_HEIGHT = 96;
+const READING_ROW_HEIGHT = 96;
 const CROSS_AXIS_WEIGHT = 2;
 
 function compareText(left: string, right: string): number {

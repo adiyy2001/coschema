@@ -27,8 +27,8 @@ export interface AnnouncerOptions {
 
 export const DEFAULT_MIN_INTERVAL_MS = 1500;
 export const DEFAULT_SETTLE_MS = 250;
-export const DEFAULT_STALE_AFTER_MS = 10_000;
-export const DEFAULT_MAX_PHRASES = 3;
+const DEFAULT_STALE_AFTER_MS = 10_000;
+const DEFAULT_MAX_PHRASES = 3;
 export const NON_BREAKING_SPACE = String.fromCharCode(160);
 
 const SUPERSEDED_BY_DELETE: ReadonlySet<ChangeKind> = new Set(['moved', 'renamed', 'restyled']);

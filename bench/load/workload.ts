@@ -36,7 +36,7 @@ export function createCollectors(): Collectors {
   };
 }
 
-export function epochNow(): number {
+function epochNow(): number {
   return performance.timeOrigin + performance.now();
 }
 
@@ -112,7 +112,7 @@ export function createOwnNode(client: LoadClient): void {
   });
 }
 
-export function applyOperation(client: LoadClient, collectors: Collectors): void {
+function applyOperation(client: LoadClient, collectors: Collectors): void {
   const now = epochNow();
   client.sequence += 1;
   client.pendingSince ??= now;

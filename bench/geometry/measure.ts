@@ -10,14 +10,14 @@ import {
 import { round, summarize, type Summary } from '../lib/stats';
 import { mulberry32, type Scene, type SceneEdge } from './scene';
 
-export interface RoutingResult {
+interface RoutingResult {
   readonly edges: number;
   readonly fallbackRoutes: number;
   readonly totalMs: readonly number[];
   readonly perEdgeMicroseconds: Summary;
 }
 
-export interface CullingResult {
+interface CullingResult {
   readonly zoom: number;
   readonly queries: number;
   readonly meanVisibleNodes: number;

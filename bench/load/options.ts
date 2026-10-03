@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
 
-export type StoreChoice = 'postgres' | 'memory';
+type StoreChoice = 'postgres' | 'memory';
 
 export interface LoadOptions {
   readonly rooms: number;
@@ -14,7 +14,7 @@ export interface LoadOptions {
   readonly output: string;
 }
 
-export const DEFAULT_OPTIONS: LoadOptions = {
+const DEFAULT_OPTIONS: LoadOptions = {
   rooms: 50,
   clientsPerRoom: 10,
   opsPerSecondPerClient: 4,

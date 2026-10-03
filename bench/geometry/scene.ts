@@ -1,6 +1,6 @@
 import type { Rect } from '@coschema/geometry';
 
-export interface SceneNode {
+interface SceneNode {
   readonly id: string;
   readonly rect: Rect;
 }

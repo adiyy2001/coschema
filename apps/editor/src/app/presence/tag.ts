@@ -22,7 +22,7 @@ function channelLuminance(hex: string, offset: number): number {
   return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
 }
 
-export function relativeLuminance(hex: string): number {
+function relativeLuminance(hex: string): number {
   return (
     0.2126 * channelLuminance(hex, 1) +
     0.7152 * channelLuminance(hex, 3) +

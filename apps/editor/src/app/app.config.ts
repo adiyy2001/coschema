@@ -9,10 +9,10 @@ import type { RouterStateSnapshot } from '@angular/router';
 import { TitleStrategy, provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
-export const APP_NAME = 'coschema';
+const APP_NAME = 'coschema';
 
 @Injectable({ providedIn: 'root' })
-export class AppTitleStrategy extends TitleStrategy {
+class AppTitleStrategy extends TitleStrategy {
   private readonly title = inject(Title);
 
   override updateTitle(snapshot: RouterStateSnapshot): void {

@@ -14,7 +14,7 @@ export interface MessTarget {
   readonly labelOf: (id: NodeId) => string | undefined;
 }
 
-export const MESS_NODE_TYPES = ['rect', 'rounded', 'ellipse', 'diamond'] as const;
+const MESS_NODE_TYPES = ['rect', 'rounded', 'ellipse', 'diamond'] as const;
 
 const FIELD_WIDTH = 900;
 const FIELD_HEIGHT = 480;

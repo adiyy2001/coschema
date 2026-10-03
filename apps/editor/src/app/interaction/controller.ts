@@ -34,8 +34,8 @@ import {
   type Tool,
 } from './types';
 
-export const PORT_HIT_RADIUS_PIXELS = 9;
-export const EDGE_HIT_TOLERANCE_PIXELS = 6;
+const PORT_HIT_RADIUS_PIXELS = 9;
+const EDGE_HIT_TOLERANCE_PIXELS = 6;
 const MAX_PORT_NODES = 8;
 const ZOOM_STEP = 1.25;
 

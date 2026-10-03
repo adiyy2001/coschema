@@ -5,7 +5,7 @@ import type { DocumentStore } from '../../apps/server/src/persistence/store';
 import { round } from '../lib/stats';
 import { recordSession } from './session';
 
-export const LOAD_REPEATS = 5;
+const LOAD_REPEATS = 5;
 
 export interface SizeMeasurement {
   readonly nodes: number;

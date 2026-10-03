@@ -11,7 +11,7 @@ export interface PanOptions {
   readonly height: number;
 }
 
-export const DEFAULT_PAN_OPTIONS: PanOptions = {
+const DEFAULT_PAN_OPTIONS: PanOptions = {
   nodes: 5000,
   zooms: [1, 0.75, 0.5, 0.35, 0.25, 0.2, 0.1, 0.05],
   runs: 3,

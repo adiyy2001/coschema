@@ -34,14 +34,14 @@ export const DEMO_OPTIONS = new InjectionToken<DemoOptions>('DEMO_OPTIONS', {
   factory: () => ({ paneCount: 2, search: globalThis.location.search }),
 });
 
-export const DEMO_ROOM = 'demo';
-export const DEMO_TOKEN = 'demo';
-export const MIN_PANES = 2;
-export const MAX_PANES = 3;
+const DEMO_ROOM = 'demo';
+const DEMO_TOKEN = 'demo';
+const MIN_PANES = 2;
+const MAX_PANES = 3;
 export const POLL_INTERVAL_MS = 200;
 export const MESS_OFFLINE_MS = 1800;
 export const DEMO_NAMES: readonly string[] = ['Ada', 'Bruno', 'Cleo'];
-export const STARTING_PROFILE: LinkProfileName = 'clean';
+const STARTING_PROFILE: LinkProfileName = 'clean';
 
 export function paneCountFrom(search: string, fallback: number): number {
   const requested = new URLSearchParams(search).get('panes');

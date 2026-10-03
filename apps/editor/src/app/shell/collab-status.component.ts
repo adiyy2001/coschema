@@ -4,7 +4,7 @@ import type { ConnectionState } from '../collab/collaboration-session';
 import { dashFor, initialsOf } from '../presence/peers';
 import { readableTextColor } from '../presence/tag';
 
-export function connectionLabel(state: ConnectionState, manuallyOffline: boolean): string {
+function connectionLabel(state: ConnectionState, manuallyOffline: boolean): string {
   switch (state) {
     case 'online':
       return 'Online';
@@ -19,7 +19,7 @@ export function connectionLabel(state: ConnectionState, manuallyOffline: boolean
   }
 }
 
-export function pendingLabel(pending: number): string {
+function pendingLabel(pending: number): string {
   return pending === 1 ? '1 change waiting to sync' : `${pending} changes waiting to sync`;
 }
 

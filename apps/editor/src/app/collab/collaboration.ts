@@ -59,7 +59,7 @@ export const COLLAB_CLOCK = new InjectionToken<Clock>('COLLAB_CLOCK', {
   factory: () => systemClock,
 });
 
-export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 @Injectable()
 export class Collaboration {

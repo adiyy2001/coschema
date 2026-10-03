@@ -34,7 +34,7 @@ import {
   type Pinch,
 } from './types';
 
-export const DRAG_THRESHOLD_PIXELS = 4;
+const DRAG_THRESHOLD_PIXELS = 4;
 
 const NO_EFFECTS: readonly Effect[] = [];
 

@@ -22,7 +22,7 @@ export function constantRandom(value: number): () => number {
   return () => value;
 }
 
-export class MemoryNetwork {
+class MemoryNetwork {
   readonly pairs: MemoryPair[] = [];
 
   settle(): void {
@@ -35,7 +35,7 @@ export class MemoryNetwork {
   }
 }
 
-export function recordClientFrames(transport: Transport, log: FrameLog): Transport {
+function recordClientFrames(transport: Transport, log: FrameLog): Transport {
   return {
     send: (data) => {
       log.sent.push(data.slice());

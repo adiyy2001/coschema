@@ -4,7 +4,7 @@ export interface CursorPoint {
 }
 
 export const DEFAULT_HALF_LIFE_MS = 45;
-export const SETTLE_DISTANCE = 0.05;
+const SETTLE_DISTANCE = 0.05;
 export const MAX_FRAME_GAP_MS = 250;
 export const NOMINAL_FRAME_MS = 16.7;
 

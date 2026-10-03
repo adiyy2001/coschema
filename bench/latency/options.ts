@@ -11,7 +11,7 @@ export interface LatencyOptions {
   readonly output: string;
 }
 
-export const DEFAULT_OPTIONS: LatencyOptions = {
+const DEFAULT_OPTIONS: LatencyOptions = {
   stores: ['memory', 'postgres'],
   edits: 200,
   warmupEdits: 10,

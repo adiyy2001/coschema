@@ -59,7 +59,7 @@ export function sameViewportRect(
   );
 }
 
-export function samePeer(left: Peer, right: Peer): boolean {
+function samePeer(left: Peer, right: Peer): boolean {
   return (
     left.clientId === right.clientId &&
     left.user.name === right.user.name &&

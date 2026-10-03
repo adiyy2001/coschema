@@ -1,7 +1,7 @@
 import type { Gesture } from '@coschema/model';
 import type { Clock, TimerHandle } from '@coschema/sync';
 
-export const BURST_WINDOW_MS = 400;
+const BURST_WINDOW_MS = 400;
 
 export interface BurstHistory {
   beginGesture(): Gesture;

@@ -9,7 +9,7 @@ import {
   type RandomSource,
 } from '@coschema/model';
 
-export function seededRandom(seed: number): RandomSource {
+function seededRandom(seed: number): RandomSource {
   let state = seed >>> 0;
   return () => {
     state = (state + 0x6d2b79f5) >>> 0;

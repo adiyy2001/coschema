@@ -12,9 +12,9 @@ export interface LocationLike {
   readonly host: string;
 }
 
-export const ROOM_PATTERN = /^[A-Za-z0-9_-]{1,64}$/u;
-export const SAME_ORIGIN_HTTP_PREFIX = '/api';
-export const SAME_ORIGIN_WS_PREFIX = '/ws';
+const ROOM_PATTERN = /^[A-Za-z0-9_-]{1,64}$/u;
+const SAME_ORIGIN_HTTP_PREFIX = '/api';
+const SAME_ORIGIN_WS_PREFIX = '/ws';
 
 export function isValidRoom(room: string): boolean {
   return ROOM_PATTERN.test(room);
@@ -71,7 +71,7 @@ export function tokenUrl(target: ConnectionTarget): string {
   return `${target.httpBase}/dev/token`;
 }
 
-export interface IssuedToken {
+interface IssuedToken {
   readonly token: string;
 }
 

@@ -39,7 +39,7 @@ export class GeneratorWorker {
   }
 }
 
-export function roomsForWorker(options: LoadOptions, index: number): number[] {
+function roomsForWorker(options: LoadOptions, index: number): number[] {
   const rooms: number[] = [];
   for (let room = index; room < options.rooms; room += options.workers) rooms.push(room);
   return rooms;

@@ -1,7 +1,7 @@
 import { expect, type Browser, type BrowserContext, type Page } from '@playwright/test';
 import { E2E_PORT, SYNC_PORT } from '../playwright.config';
 
-export const SERVER_URL = `http://127.0.0.1:${SYNC_PORT}`;
+const SERVER_URL = `http://127.0.0.1:${SYNC_PORT}`;
 export const ONLINE = '[data-connection][data-state="online"]';
 
 export interface Client {

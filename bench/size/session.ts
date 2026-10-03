@@ -13,12 +13,12 @@ import {
 import * as Y from 'yjs';
 import { generateScene, mulberry32, type Scene } from '../geometry/scene';
 
-export const NODE_TYPES_IN_ORDER: readonly NodeType[] = ['rect', 'rounded', 'ellipse', 'diamond'];
-export const DRAG_STEPS = 12;
-export const DRAGGED_SHARE = 0.3;
-export const RETYPED_SHARE = 0.2;
-export const DELETED_SHARE = 0.05;
-export const LABEL_REVISIONS = 6;
+const NODE_TYPES_IN_ORDER: readonly NodeType[] = ['rect', 'rounded', 'ellipse', 'diamond'];
+const DRAG_STEPS = 12;
+const DRAGGED_SHARE = 0.3;
+const RETYPED_SHARE = 0.2;
+const DELETED_SHARE = 0.05;
+const LABEL_REVISIONS = 6;
 
 export interface RecordedSession {
   readonly updates: readonly Uint8Array[];

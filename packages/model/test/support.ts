@@ -45,16 +45,6 @@ export function syncPair(left: TestClient, right: TestClient): void {
   pushUpdates(right.doc, left.doc);
 }
 
-export function syncAll(clients: readonly TestClient[]): void {
-  for (let round = 0; round < 2; round += 1) {
-    for (const from of clients) {
-      for (const to of clients) {
-        if (from !== to) pushUpdates(from.doc, to.doc);
-      }
-    }
-  }
-}
-
 export function stateVectorOf(client: TestClient): string {
   return JSON.stringify(
     [...Y.decodeStateVector(Y.encodeStateVector(client.doc)).entries()].sort(

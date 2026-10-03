@@ -10,7 +10,7 @@ import { createApp, type App } from '../../src/server';
 
 export const TEST_SECRET = 'a-test-secret-with-enough-length';
 
-export function testConfig(overrides: Readonly<Record<string, string>> = {}): Config {
+function testConfig(overrides: Readonly<Record<string, string>> = {}): Config {
   return parseConfig({
     COSCHEMA_HOST: '127.0.0.1',
     COSCHEMA_PORT: '0',
