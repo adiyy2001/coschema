@@ -12,6 +12,7 @@
     "lighthouse",
     "size",
     "compose",
+    "demo-gif",
     "test",
     "*.ts"
   ]
