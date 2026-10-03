@@ -20,12 +20,14 @@
     "bench:load": "pnpm --filter @coschema/server build && tsx bench/load/main.ts",
     "bench:geometry": "tsx bench/geometry/main.ts",
     "build": "pnpm -r --if-present build",
-    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build"
+    "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm build",
+    "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/node": "24.19.1",
     "@vitest/coverage-v8": "5.0.3",
+    "angular-eslint": "22.5.0",
     "esbuild": "0.28.2",
     "eslint": "10.12.0",
     "fast-check": "4.10.2",

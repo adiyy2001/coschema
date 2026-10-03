@@ -2,9 +2,13 @@ packages:
   - apps/*
   - packages/*
   - bench
+  - e2e
 
 allowBuilds:
+  '@parcel/watcher': true
   esbuild: true
+  lmdb: true
+  msgpackr-extract: true
 
 minimumReleaseAgeExclude:
   - eslint@10.12.0

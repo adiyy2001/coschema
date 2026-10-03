@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import angular from 'angular-eslint';
 import tseslint from 'typescript-eslint';
 
 const nondeterminismBan = [
@@ -26,8 +27,12 @@ export default tseslint.config(
     ],
   },
   js.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.strictTypeChecked.map((config) => ({
+    ...config,
+    files: config.files ?? ['**/*.ts'],
+  })),
   {
+    files: ['**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: {
@@ -53,6 +58,31 @@ export default tseslint.config(
       eqeqeq: ['error', 'always'],
       'no-console': 'error',
     },
+  },
+  {
+    files: ['apps/editor/**/*.ts'],
+    extends: [...angular.configs.tsRecommended],
+    processor: angular.processInlineTemplates,
+    rules: {
+      '@angular-eslint/component-selector': [
+        'error',
+        { type: ['element', 'attribute'], prefix: 'cs', style: 'kebab-case' },
+      ],
+      '@angular-eslint/directive-selector': [
+        'error',
+        { type: 'attribute', prefix: 'cs', style: 'camelCase' },
+      ],
+      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
+      '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+    },
+  },
+  {
+    files: ['apps/editor/**/*.html'],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
+  },
+  {
+    files: ['apps/editor/src/main.ts'],
+    rules: { 'no-console': 'off' },
   },
   {
     files: ['**/*.js', '**/*.mjs'],
