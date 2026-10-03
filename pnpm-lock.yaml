@@ -206,6 +206,39 @@ importers:
         specifier: 13.6.33
         version: 13.6.33
 
+  packages/sim:
+    dependencies:
+      '@coschema/model':
+        specifier: workspace:*
+        version: link:../model
+      '@coschema/sync':
+        specifier: workspace:*
+        version: link:../sync
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
+      y-protocols:
+        specifier: 1.0.7
+        version: 1.0.7(yjs@13.6.33)
+      yjs:
+        specifier: 13.6.33
+        version: 13.6.33
+
+  packages/sync:
+    dependencies:
+      '@coschema/model':
+        specifier: workspace:*
+        version: link:../model
+      lib0:
+        specifier: 0.2.119
+        version: 0.2.119
+      y-protocols:
+        specifier: 1.0.7
+        version: 1.0.7(yjs@13.6.33)
+      yjs:
+        specifier: 13.6.33
+        version: 13.6.33
+
 packages:
 
   '@babel/helper-string-parser@7.29.7':
@@ -1222,6 +1255,12 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
+  y-protocols@1.0.7:
+    resolution: {integrity: sha512-YSVsLoXxO67J6eE/nV4AtFtT3QEotZf5sK5BHxFBXso7VDUT3Tx07IfA6hsu5Q5OmBdMkQVmFZ9QOA7fikWvnw==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+    peerDependencies:
+      yjs: ^13.0.0
+
   yjs@13.6.33:
     resolution: {integrity: sha512-q/UYvr1gOk4XII+Cu1CW2dINjYqJJFifTzogEaIARznrvX7uOlHsdTEXcnOBMuIsrCGEEKdNxi74kyMLZlKVfw==}
     engines: {node: '>=16.0.0', npm: '>=8.0.0'}
@@ -2062,6 +2101,11 @@ snapshots:
   why-is-node-running@3.2.1: {}
 
   word-wrap@1.2.5: {}
+
+  y-protocols@1.0.7(yjs@13.6.33):
+    dependencies:
+      lib0: 0.2.119
+      yjs: 13.6.33
 
   yjs@13.6.33:
     dependencies:
