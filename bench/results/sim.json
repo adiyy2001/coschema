@@ -3,8 +3,8 @@
   "from": 1,
   "failed": 0,
   "failedSeeds": [],
-  "durationMs": 110707,
-  "seedsPerSecond": 45.2,
+  "durationMs": 76338,
+  "seedsPerSecond": 65.5,
   "totals": {
     "messagesSent": 1756564,
     "messagesDelivered": 1609362,
@@ -15,6 +15,6 @@
     "loggedUpdates": 199627
   },
   "virtualMs": 83833274,
-  "generatedAt": "2026-10-03T23:10:42.909Z",
+  "generatedAt": "2026-10-03T23:43:03.680Z",
   "node": "v24.21.0"
 }
