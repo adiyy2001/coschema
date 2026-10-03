@@ -19,14 +19,27 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [{ "glob": "**/*", "input": "public" }],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial", "maximumWarning": "500kB", "maximumError": "1MB" },
-                { "type": "anyComponentStyle", "maximumWarning": "6kB", "maximumError": "10kB" }
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
+                }
               ],
               "outputHashing": "all"
             },
@@ -41,8 +54,12 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": { "buildTarget": "editor:build:production" },
-            "development": { "buildTarget": "editor:build:development" }
+            "production": {
+              "buildTarget": "editor:build:production"
+            },
+            "development": {
+              "buildTarget": "editor:build:development"
+            }
           },
           "defaultConfiguration": "development"
         },
@@ -50,7 +67,18 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "editor:build:development"
+            "buildTarget": "editor:build:development",
+            "runnerConfig": "vitest.angular.config.ts",
+            "setupFiles": ["src/test-setup.ts"],
+            "coverageInclude": ["src/app/**/*.ts"],
+            "coverageExclude": [
+              "src/app/**/*.spec.ts",
+              "src/app/testing/**",
+              "src/app/app.ts",
+              "src/app/app.config.ts",
+              "src/app/app.routes.ts"
+            ],
+            "coverageReporters": ["text-summary", "json-summary", "lcov"]
           }
         }
       }

@@ -36,7 +36,7 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['*.js'],
+          allowDefaultProject: ['*.js', 'apps/editor/vitest.angular.config.ts'],
         },
         tsconfigRootDir: import.meta.dirname,
       },
