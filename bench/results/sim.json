@@ -1,0 +1,20 @@
+{
+  "seeds": 5000,
+  "from": 1,
+  "failed": 0,
+  "failedSeeds": [],
+  "durationMs": 78685,
+  "seedsPerSecond": 63.5,
+  "totals": {
+    "messagesSent": 1756564,
+    "messagesDelivered": 1609362,
+    "messagesDuplicated": 6418,
+    "messagesLost": 12715,
+    "messagesPartitioned": 93853,
+    "connects": 67047,
+    "loggedUpdates": 199627
+  },
+  "virtualMs": 83833274,
+  "generatedAt": "2026-10-03T16:42:19.028Z",
+  "node": "v24.21.0"
+}

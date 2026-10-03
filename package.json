@@ -14,6 +14,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && pnpm -r --if-present typecheck",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:sim": "vitest run --project sim test/property.test.ts",
+    "sim": "tsx packages/sim/src/bin.ts",
     "build": "pnpm -r --if-present build",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm build"
   },

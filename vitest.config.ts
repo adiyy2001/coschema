@@ -10,11 +10,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['packages/*/src/**/*.ts'],
-      exclude: ['**/*.d.ts'],
+      exclude: ['**/*.d.ts', 'packages/sim/src/bin.ts'],
       reporter: ['text-summary', 'json-summary', 'lcov'],
       thresholds: {
         'packages/model/src/**': coreLogic,
         'packages/sync/src/**': coreLogic,
+        'packages/sim/src/**': coreLogic,
       },
     },
   },
