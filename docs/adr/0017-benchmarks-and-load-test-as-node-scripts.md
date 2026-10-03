@@ -10,7 +10,7 @@ The brief wants a load test (50 rooms with 10 clients each, operations per secon
 
 All of them are TypeScript scripts under `bench/`, run with tsx:
 
-- `bench/load`: starts the real server (PostgreSQL store through the test database helper, or the in-memory store with a flag), opens 50 rooms with 10 `SyncClient`s each in one process, drives random operations for a fixed duration and reports operations per second, p50, p95 and p99 latency from one client's write to another client's observer, plus server CPU and RSS.
+- `bench/load`: starts the real server (PostgreSQL store through the test database helper, or the in-memory store with a flag), opens 50 rooms with 10 `SyncClient`s each, spread over worker threads of one generator process, drives random operations for a fixed duration and reports operations per second, p50, p95 and p99 latency from one client's write to another client's observer, plus server CPU and RSS and the event loop utilization of the busiest generator thread.
 - `bench/latency`: Playwright, two contexts, N edits, p50 and p95 from the edit to the pixel on the other side.
 - `bench/pan`: Playwright, a document with 5,000 nodes, scripted pan and zoom gestures, frame times from `requestAnimationFrame`, reported as fps and the share of frames over 16.7 ms.
 - `bench/size`: builds documents of increasing size, encodes them, compacts through the real store and prints bytes before and after.
@@ -27,3 +27,4 @@ Each script writes JSON to `bench/results/` with a timestamp, the CPU model, cor
 
 - Numbers from a laptop under WSL2 with other jobs running are noisy. Scripts run each measurement several times, report the spread and say so in the output.
 - Load results describe one Node process on one machine. The README states that and does not extrapolate.
+- The first version ran all 500 clients on one thread. The generator reached 108% of a core and a p99 event loop delay of 43 ms, so the reported latency was mostly the generator waiting for itself. The clients now live in four worker threads that each own whole rooms, and the report carries the busiest worker's event loop utilization. In the committed run it is about 0.5 while the server is at about 85% of one core, so the server is the part that is loaded.

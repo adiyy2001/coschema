@@ -7,12 +7,10 @@ services:
       POSTGRES_USER: coschema
       POSTGRES_PASSWORD: coschema
       POSTGRES_DB: coschema
-    ports:
-      - "127.0.0.1:5432:5432"
     volumes:
       - coschema-pgdata:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U coschema -d coschema"]
+      test: ['CMD-SHELL', 'pg_isready -U coschema -d coschema']
       interval: 2s
       timeout: 3s
       retries: 30
@@ -28,14 +26,14 @@ services:
         condition: service_healthy
     environment:
       COSCHEMA_HOST: 0.0.0.0
-      COSCHEMA_PORT: "4218"
+      COSCHEMA_PORT: '4218'
       COSCHEMA_STORE: postgres
       DATABASE_URL: postgres://coschema:coschema@postgres:5432/coschema
       COSCHEMA_JWT_SECRET: ${COSCHEMA_JWT_SECRET:-coschema-compose-local-secret}
-      COSCHEMA_DEV_TOKENS: "1"
+      COSCHEMA_DEV_TOKENS: '1'
       COSCHEMA_ALLOWED_ORIGINS: ${COSCHEMA_ALLOWED_ORIGINS:-http://127.0.0.1:4217,http://localhost:4217,http://127.0.0.1:4280,http://localhost:4280}
     ports:
-      - "127.0.0.1:4218:4218"
+      - '127.0.0.1:4218:4218'
     stop_grace_period: 15s
     networks:
       - coschema-net
