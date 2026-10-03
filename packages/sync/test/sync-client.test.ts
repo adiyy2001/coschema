@@ -578,6 +578,27 @@ describe('SyncClient awareness', () => {
     expect(bob.awareness.getStates().has(1)).toBe(false);
   });
 
+  it('keeps its presence when the hub processes the close of the old connection after the new handshake', () => {
+    const harness = createHarness();
+    const alice = harness.client({}, 1);
+    const bob = harness.client({}, 2);
+    alice.start();
+    bob.start();
+    harness.network.settle();
+    alice.awareness.setLocalState({ name: 'Alice' });
+    harness.network.settle();
+    const [oldPair] = harness.network.pairs;
+    alice.reconnect();
+    const newPair = harness.network.pairs[harness.network.pairs.length - 1];
+    expect(newPair).not.toBe(oldPair);
+    newPair?.flush();
+    harness.network.settle();
+    oldPair?.flush();
+    harness.network.settle();
+    expect(bob.awareness.getStates().get(1)).toEqual({ name: 'Alice' });
+    expect(harness.hub.awareness.getStates().get(1)).toEqual({ name: 'Alice' });
+  });
+
   it('sends the current local state in the handshake', () => {
     const harness = createHarness();
     const alice = harness.client({}, 1);

@@ -176,6 +176,7 @@ export class SyncClient {
 
   private handleOpen(transport: Transport): void {
     if (transport !== this.transport || this.opened) return;
+    this.outbidHubRemoval();
     this.opened = true;
     this.setStatus('syncing');
     this.sendFrame(encodeAuthToken(this.options.getToken()));
@@ -183,6 +184,13 @@ export class SyncClient {
     if (this.awareness.getLocalState() !== null) this.sendAwarenessNow();
     this.sendFrame(encodeQueryAwareness());
     this.watchAcks();
+  }
+
+  private outbidHubRemoval(): void {
+    const state = this.awareness.getLocalState();
+    if (state === null) return;
+    this.awareness.setLocalState(state);
+    this.awareness.setLocalState(state);
   }
 
   private handleFrame(transport: Transport, data: Uint8Array): void {
