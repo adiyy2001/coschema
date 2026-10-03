@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["lib", "load", "geometry", "test", "*.ts"]
+  "include": ["lib", "load", "geometry", "pan", "test", "*.ts"]
 }

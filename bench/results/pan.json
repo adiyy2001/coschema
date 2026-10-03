@@ -1,0 +1,117 @@
+{
+  "generatedAt": "2026-10-03T17:45:09.353Z",
+  "revision": "08bde32",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.21.0"
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "153.0.8010.12",
+    "headless": true
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "options": {
+    "nodes": 5000,
+    "zooms": [
+      0.1,
+      0.05
+    ],
+    "runs": 2,
+    "durationMs": 4000,
+    "port": 4319,
+    "output": "pan",
+    "width": 1280,
+    "height": 720
+  },
+  "frameBudgetMs": 16.67,
+  "zooms": [
+    {
+      "zoom": 0.1,
+      "nodesInDom": 0,
+      "edgesInDom": 0,
+      "svgElements": 10,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.8,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    },
+    {
+      "zoom": 0.05,
+      "nodesInDom": 0,
+      "edgesInDom": 0,
+      "svgElements": 10,
+      "runs": [
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        },
+        {
+          "fps": 60,
+          "frameMs": {
+            "samples": 230,
+            "mean": 16.67,
+            "p50": 16.7,
+            "p95": 16.7,
+            "p99": 16.8,
+            "max": 16.8
+          },
+          "overBudgetShare": 0,
+          "droppedShare": 0,
+          "longTasks": 0,
+          "longestTaskMs": 0
+        }
+      ],
+      "medianFps": 60,
+      "worstFps": 60
+    }
+  ]
+}
