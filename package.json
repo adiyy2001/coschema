@@ -25,6 +25,7 @@
     "bench:latency": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/latency/main.ts",
     "lighthouse": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/lighthouse/main.ts",
     "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts",
+    "test:compose": "tsx bench/compose/smoke.ts",
     "test:e2e:postgres": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx scripts/e2e-postgres.ts",
     "test:e2e": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && pnpm --filter @coschema/e2e exec playwright test"
   },
