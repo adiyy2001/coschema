@@ -27,6 +27,7 @@ export const EDGE_KEYS = {
 
 export const META_KEYS = {
   schemaVersion: 'schemaVersion',
+  seeded: 'seeded',
 } as const;
 
 export interface NodeStyle {

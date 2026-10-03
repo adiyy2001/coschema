@@ -1,6 +1,10 @@
 import { DestroyRef, Injectable, InjectionToken, inject, signal, type Signal } from '@angular/core';
 import {
   History,
+  META_KEYS,
+  getEdges,
+  getMeta,
+  getNodes,
   initializeDocument,
   type CommandContext,
   type HistoryState,
@@ -11,10 +15,16 @@ import { GraphView } from './graph-view';
 import { RANDOM } from './random';
 
 export type DocumentSeed = (context: CommandContext) => void;
+export type DocumentBootstrap = 'immediate' | 'deferred';
 
 export const DOCUMENT_SEED = new InjectionToken<DocumentSeed>('DOCUMENT_SEED', {
   providedIn: 'root',
   factory: () => () => undefined,
+});
+
+export const DOCUMENT_BOOTSTRAP = new InjectionToken<DocumentBootstrap>('DOCUMENT_BOOTSTRAP', {
+  providedIn: 'root',
+  factory: () => 'immediate',
 });
 
 @Injectable()
@@ -23,6 +33,7 @@ export class DocumentSession {
   readonly history: History;
   readonly context: CommandContext;
   readonly graph: GraphView;
+  private readonly seed = inject(DOCUMENT_SEED);
   private readonly historyStateSignal = signal<HistoryState>({
     canUndo: false,
     canRedo: false,
@@ -31,13 +42,15 @@ export class DocumentSession {
   });
 
   constructor() {
-    initializeDocument(this.doc);
     this.history = new History(this.doc);
     this.context = this.history.context(inject(RANDOM));
-    inject(DOCUMENT_SEED)(this.context);
-    this.history.clear();
-    this.historyStateSignal.set(this.history.state);
+    if (inject(DOCUMENT_BOOTSTRAP) === 'immediate') {
+      this.prepare();
+      this.seed(this.context);
+      this.history.clear();
+    }
     this.graph = new GraphView(this.doc, inject(FRAME_SCHEDULER));
+    this.historyStateSignal.set(this.history.state);
     const unsubscribe = this.history.subscribe((state) => {
       this.historyStateSignal.set(state);
     });
@@ -51,5 +64,21 @@ export class DocumentSession {
 
   get historyState(): Signal<HistoryState> {
     return this.historyStateSignal.asReadonly();
+  }
+
+  prepare(): void {
+    initializeDocument(this.doc);
+  }
+
+  seedIfNeverSeeded(): boolean {
+    const meta = getMeta(this.doc);
+    const untouched = getNodes(this.doc).size === 0 && getEdges(this.doc).size === 0;
+    if (meta.has(META_KEYS.seeded) || !untouched) return false;
+    this.doc.transact(() => {
+      this.seed(this.context);
+      meta.set(META_KEYS.seeded, true);
+    }, this.context.origin);
+    this.history.clear();
+    return true;
   }
 }

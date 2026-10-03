@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ViewportState } from '../canvas/viewport-state';
 import { DocumentSession } from '../core/document-session';
 import { InteractionController } from '../interaction/controller';
 import { SelectionState } from '../interaction/selection-state';
 import type { Tool } from '../interaction/types';
+import { CollabStatusComponent } from './collab-status.component';
+import { JoinDialogComponent } from './join-dialog.component';
 
 interface ToolButton {
   readonly tool: Tool;
@@ -35,6 +37,7 @@ const TOOLS: readonly ToolButton[] = [
 @Component({
   selector: 'cs-toolbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CollabStatusComponent, JoinDialogComponent],
   styles: `
     :host {
       display: block;
@@ -104,8 +107,16 @@ const TOOLS: readonly ToolButton[] = [
       min-width: 56px;
       font-variant-numeric: tabular-nums;
     }
-    .status {
+    .right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px 12px;
       margin-left: auto;
+    }
+    .status {
+      margin: 0;
       color: var(--cs-muted, #5b6578);
       font-size: 13px;
     }
@@ -217,14 +228,19 @@ const TOOLS: readonly ToolButton[] = [
           </svg>
         </button>
       </div>
-      <p class="status" aria-live="off">
-        {{ session.graph.nodeCount() }} nodes, {{ session.graph.edgeCount() }} edges
-      </p>
+      <div class="right">
+        <p class="status" aria-live="off">
+          {{ session.graph.nodeCount() }} nodes, {{ session.graph.edgeCount() }} edges
+        </p>
+        <cs-collab-status (openJoin)="joinOpen.set(true)" />
+      </div>
     </div>
+    <cs-join-dialog [open]="joinOpen()" (closed)="joinOpen.set(false)" />
   `,
 })
 export class ToolbarComponent {
   protected readonly tools = TOOLS;
+  protected readonly joinOpen = signal(false);
   protected readonly controller = inject(InteractionController);
   protected readonly session = inject(DocumentSession);
   protected readonly selection = inject(SelectionState);

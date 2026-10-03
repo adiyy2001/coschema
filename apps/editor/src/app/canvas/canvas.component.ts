@@ -10,9 +10,12 @@ import {
   viewChild,
 } from '@angular/core';
 import type { Vec2 } from '@coschema/geometry';
+import { Collaboration } from '../collab/collaboration';
 import { DocumentSession } from '../core/document-session';
 import { InteractionController } from '../interaction/controller';
 import { SelectionState } from '../interaction/selection-state';
+import { CursorsLayerComponent } from '../presence/cursors-layer.component';
+import { PresenceLayerComponent } from '../presence/presence-layer.component';
 import { EdgeComponent } from './edge.component';
 import { LabelEditorComponent } from './label-editor.component';
 import { NodeComponent } from './node.component';
@@ -36,11 +39,13 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
   selector: 'cs-canvas',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CursorsLayerComponent,
     EdgeComponent,
     LabelEditorComponent,
     NodeComponent,
     OverlayComponent,
     OverviewComponent,
+    PresenceLayerComponent,
   ],
   host: {
     '[class.panning]': 'panning()',
@@ -99,7 +104,7 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
       (pointermove)="onPointerMove($event)"
       (pointerup)="onPointerUp($event)"
       (pointercancel)="onPointerCancel($event)"
-      (pointerleave)="controller.clearHover()"
+      (pointerleave)="onPointerLeave()"
       (wheel)="onWheel($event)"
       (dblclick)="onDoubleClick($event)"
       (keydown)="onKeyDown($event)"
@@ -146,6 +151,10 @@ function sameIds(left: readonly string[], right: readonly string[]): boolean {
             }
           </g>
         }
+        @if (collaboration) {
+          <g cs-presence></g>
+          <g cs-cursors></g>
+        }
         <g cs-overlay></g>
       </g>
     </svg>
@@ -158,6 +167,7 @@ export class CanvasComponent {
   protected readonly controller = inject(InteractionController);
   private readonly session = inject(DocumentSession);
   private readonly selection = inject(SelectionState);
+  protected readonly collaboration = inject(Collaboration, { optional: true });
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly surface = viewChild.required<ElementRef<SVGSVGElement>>('surface');
   private spaceHeld = false;
@@ -224,10 +234,16 @@ export class CanvasComponent {
 
   protected onPointerMove(event: PointerEvent): void {
     const screen = this.screenOf(event);
+    this.collaboration?.publishCursor(this.worldOf(event));
     this.controller.dispatch({ type: 'pointermove', pointerId: event.pointerId, screen });
     if (this.controller.state().mode === 'idle' && event.pointerType !== 'touch') {
       this.controller.updateHover(screen);
     }
+  }
+
+  protected onPointerLeave(): void {
+    this.controller.clearHover();
+    this.collaboration?.publishCursor(null);
   }
 
   protected onPointerUp(event: PointerEvent): void {
