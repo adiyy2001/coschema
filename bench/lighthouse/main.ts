@@ -48,6 +48,7 @@ async function runLighthouse(
     ...(formFactor === 'desktop' ? ['--preset=desktop'] : []),
   ];
   await execFileAsync('pnpm', args, {
+    cwd: workDirectory,
     env: { ...process.env, CHROME_PATH: chromePath },
     maxBuffer: 64 * 1024 * 1024,
   });
