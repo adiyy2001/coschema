@@ -201,7 +201,7 @@ const TOOLS: readonly ToolButton[] = [
           type="button"
           class="zoom"
           data-action="zoom-reset"
-          aria-label="Reset zoom to 100%"
+          [attr.aria-label]="'Zoom ' + zoomLabel() + ', reset to 100%'"
           title="Reset zoom"
           (click)="controller.resetZoom()"
         >

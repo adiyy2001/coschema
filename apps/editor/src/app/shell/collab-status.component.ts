@@ -127,6 +127,9 @@ export function pendingLabel(pending: number): string {
       font-weight: 700;
       border: 2px solid transparent;
     }
+    .badge::before {
+      content: attr(data-initials);
+    }
     .person[aria-pressed='true'] .badge {
       outline: 2px solid var(--cs-text, #1b1f2a);
       outline-offset: 1px;
@@ -152,16 +155,16 @@ export function pendingLabel(pending: number): string {
             type="button"
             class="person"
             data-action="identity"
-            [attr.aria-label]="'You are ' + collab.identity().name + '. Change name or room'"
+            [attr.aria-label]="collab.identity().name + ' (you), change name or room'"
             (click)="openJoin.emit()"
           >
             <span
               class="badge"
               [style.background]="collab.identity().color"
               [style.color]="youText()"
+              [attr.data-initials]="youInitials()"
               aria-hidden="true"
-              >{{ youInitials() }}</span
-            >
+            ></span>
             <span>{{ collab.identity().name }} (you)</span>
           </button>
         </li>
@@ -181,10 +184,9 @@ export function pendingLabel(pending: number): string {
                 [style.background]="peer.user.color"
                 [style.color]="textFor(peer.user.color)"
                 [style.border-style]="dashFor(peer.clientId) === '' ? 'solid' : 'dashed'"
+                [attr.data-initials]="initialsOf(peer.user.name)"
                 aria-hidden="true"
-              >
-                {{ initialsOf(peer.user.name) }}
-              </span>
+              ></span>
               <span>{{ peer.user.name }}</span>
               @if (collab.following() === peer.clientId) {
                 <span class="follow-note">following</span>
