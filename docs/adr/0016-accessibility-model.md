@@ -1,6 +1,6 @@
 # 0016. Accessibility model: roving focus, keyboard commands, a throttled live region
 
-Status: accepted, 2026-10-03
+Status: accepted, 2026-10-03. The details that were open are settled in ADR 0023.
 
 ## Context
 
