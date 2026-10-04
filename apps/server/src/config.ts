@@ -72,6 +72,18 @@ function readFlag(env: Environment, name: string, problems: string[]): boolean {
   return false;
 }
 
+const DEV_TOKENS_PRODUCTION_FLAG = 'COSCHEMA_ALLOW_DEV_TOKENS_IN_PRODUCTION';
+
+function readDevTokens(env: Environment, production: boolean, problems: string[]): boolean {
+  const enabled = readFlag(env, 'COSCHEMA_DEV_TOKENS', problems);
+  if (enabled && production && !readFlag(env, DEV_TOKENS_PRODUCTION_FLAG, problems)) {
+    problems.push(
+      `COSCHEMA_DEV_TOKENS lets anyone mint a token, so in production it also needs ${DEV_TOKENS_PRODUCTION_FLAG}=1`,
+    );
+  }
+  return enabled;
+}
+
 function readOrigins(env: Environment, production: boolean, problems: string[]): string[] {
   const raw = env['COSCHEMA_ALLOWED_ORIGINS'];
   if (raw === undefined || raw.trim() === '') {
@@ -121,7 +133,7 @@ export function parseConfig(env: Environment): Config {
     port: readInteger(env, 'COSCHEMA_PORT', DEFAULTS.port, 0, 65_535, problems),
     production,
     jwtSecret: readSecret(env, production, problems),
-    devTokens: readFlag(env, 'COSCHEMA_DEV_TOKENS', problems),
+    devTokens: readDevTokens(env, production, problems),
     store,
     databaseUrl,
     idleMs: readInteger(env, 'COSCHEMA_IDLE_MS', DEFAULTS.idleMs, 1, 86_400_000, problems),

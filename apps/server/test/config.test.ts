@@ -93,6 +93,21 @@ describe('parseConfig', () => {
     expect(config.production).toBe(true);
   });
 
+  it('refuses dev tokens in production unless the second flag is set', () => {
+    const production = {
+      NODE_ENV: 'production',
+      COSCHEMA_JWT_SECRET: 's'.repeat(24),
+      COSCHEMA_ALLOWED_ORIGINS: 'https://app.example.com',
+      COSCHEMA_DEV_TOKENS: '1',
+    };
+    expect(problemsOf(production)).toEqual([
+      'COSCHEMA_DEV_TOKENS lets anyone mint a token, so in production it also needs COSCHEMA_ALLOW_DEV_TOKENS_IN_PRODUCTION=1',
+    ]);
+    const allowed = parseConfig({ ...production, COSCHEMA_ALLOW_DEV_TOKENS_IN_PRODUCTION: '1' });
+    expect(allowed.devTokens).toBe(true);
+    expect(parseConfig({ ...production, COSCHEMA_DEV_TOKENS: '0' }).devTokens).toBe(false);
+  });
+
   it('rejects a short secret', () => {
     expect(problemsOf({ COSCHEMA_JWT_SECRET: 'short' })).toEqual([
       'COSCHEMA_JWT_SECRET must be at least 16 characters',
