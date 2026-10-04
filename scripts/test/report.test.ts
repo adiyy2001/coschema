@@ -47,7 +47,14 @@ const results: Results = {
   },
   load: {
     postgres: 'PostgreSQL 18',
-    configuration: { rooms: 50, clientsPerRoom: 10, windows: 5, windowSeconds: 6 },
+    configuration: {
+      rooms: 50,
+      clientsPerRoom: 10,
+      clients: 500,
+      targetOpsPerSecondPerClient: 4,
+      windows: 5,
+      windowSeconds: 6,
+    },
     results: {
       opsPerSecond: 1991.1,
       latencyMs: summaryStats,
@@ -57,6 +64,30 @@ const results: Results = {
       disconnects: 0,
       server: { cpuPercentOfOneCore: 56, peakRssMiB: 209 },
     },
+  },
+  saturation: {
+    configuration: { p95LimitMs: 200 },
+    maxSustainedOpsPerSecond: 3986.6,
+    steps: [
+      {
+        offeredOpsPerSecond: 2000,
+        achievedOpsPerSecond: 1999,
+        deliveryP95Ms: 1.7,
+        serverCpuPercentOfOneCore: 50,
+        busiestGeneratorUtilization: 0.2,
+        sustained: true,
+        stoppedBecause: undefined,
+      },
+      {
+        offeredOpsPerSecond: 8000,
+        achievedOpsPerSecond: 7600,
+        deliveryP95Ms: 850,
+        serverCpuPercentOfOneCore: 110,
+        busiestGeneratorUtilization: 0.8,
+        sustained: false,
+        stoppedBecause: 'delivery p95 above 200 ms',
+      },
+    ],
   },
   size: {
     scenes: [
@@ -92,6 +123,12 @@ describe('buildReport', () => {
 
   it('uses the median of the routing runs', () => {
     expect(report).toContain('| 100 | 135 | 2 | 0.8 |');
+  });
+
+  it('says that the paced run is an offered rate and lists the saturation ramp', () => {
+    expect(report).toContain('offers 2,000 operations per second');
+    expect(report).toContain('maximum sustained 3,987 operations per second');
+    expect(report).toContain('| 8,000 | 7,600 | 850 | 110 | no, delivery p95 above 200 ms |');
   });
 
   it('shows the compaction ratio', () => {

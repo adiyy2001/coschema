@@ -44,7 +44,14 @@ interface PanResult {
 
 interface LoadResult {
   postgres: string;
-  configuration: { rooms: number; clientsPerRoom: number; windows: number; windowSeconds: number };
+  configuration: {
+    rooms: number;
+    clientsPerRoom: number;
+    clients: number;
+    targetOpsPerSecondPerClient: number;
+    windows: number;
+    windowSeconds: number;
+  };
   results: {
     opsPerSecond: number;
     latencyMs: Summary;
@@ -81,11 +88,28 @@ interface LighthouseResult {
   results: { path: string; formFactor: string; score: number }[];
 }
 
+interface SaturationStep {
+  offeredOpsPerSecond: number;
+  achievedOpsPerSecond: number;
+  deliveryP95Ms: number;
+  serverCpuPercentOfOneCore: number;
+  busiestGeneratorUtilization: number;
+  sustained: boolean;
+  stoppedBecause: string | undefined;
+}
+
+interface SaturationResult {
+  configuration: { p95LimitMs: number };
+  maxSustainedOpsPerSecond: number | undefined;
+  steps: SaturationStep[];
+}
+
 export interface Results {
   sim: SimResult;
   latency: LatencyResult;
   pan: PanResult;
   load: LoadResult;
+  saturation: SaturationResult;
   size: SizeResult;
   geometry: GeometryResult;
   lighthouse: LighthouseResult;
@@ -148,14 +172,33 @@ function panSection(pan: PanResult): string {
   );
 }
 
-function loadSection(load: LoadResult): string {
+function loadSection(load: LoadResult, saturation: SaturationResult): string {
   const { configuration, results } = load;
+  const offered = configuration.clients * configuration.targetOpsPerSecondPerClient;
+  const ramp = table(
+    [
+      'Offered ops/s',
+      'Completed ops/s',
+      'Delivery p95 ms',
+      'Server CPU, % of one core',
+      'Sustained',
+    ],
+    saturation.steps.map((step) => [
+      grouped(step.offeredOpsPerSecond),
+      grouped(Math.round(step.achievedOpsPerSecond)),
+      step.deliveryP95Ms,
+      step.serverCpuPercentOfOneCore,
+      step.sustained ? 'yes' : `no, ${step.stoppedBecause ?? ''}`,
+    ]),
+  );
   return [
-    `${configuration.rooms} rooms with ${configuration.clientsPerRoom} clients each, ${configuration.windows} windows of ${configuration.windowSeconds} s`,
-    `${grouped(results.opsPerSecond)} operations per second, delivery to another client p50 ${results.latencyMs.p50} ms, p95 ${results.latencyMs.p95} ms, p99 ${results.latencyMs.p99} ms`,
+    `${configuration.rooms} rooms with ${configuration.clientsPerRoom} clients each, ${configuration.windows} windows of ${configuration.windowSeconds} s. The generator offers ${grouped(offered)} operations per second (${configuration.targetOpsPerSecondPerClient} per client) and the server completed ${grouped(results.opsPerSecond)} of them, so this run shows the latency at a fixed load, not the capacity.`,
+    `delivery to another client p50 ${results.latencyMs.p50} ms, p95 ${results.latencyMs.p95} ms, p99 ${results.latencyMs.p99} ms`,
     `persistence ack p95 ${results.acknowledgementMs.p95} ms`,
     `${results.convergedRooms} of ${results.rooms} rooms converged, ${results.disconnects} disconnects`,
     `server ${results.server.cpuPercentOfOneCore}% of one core, peak RSS ${results.server.peakRssMiB} MiB`,
+    `Saturation ramp, ${saturation.configuration.p95LimitMs} ms p95 limit, maximum sustained ${grouped(Math.round(saturation.maxSustainedOpsPerSecond ?? 0))} operations per second:`,
+    ramp,
   ].join('\n');
 }
 
@@ -198,7 +241,7 @@ export function buildReport(results: Results): string {
     ['Convergence simulator', simulatorSection(results.sim)],
     ['Edit to remote render latency', latencySection(results.latency)],
     [`Panning with ${grouped(results.pan.options.nodes)} nodes`, panSection(results.pan)],
-    ['Load test', loadSection(results.load)],
+    ['Load test', loadSection(results.load, results.saturation)],
     ['Document size before and after compaction', sizeSection(results.size)],
     ['Routing', geometrySection(results.geometry)],
     [`Lighthouse ${results.lighthouse.lighthouse}`, lighthouseSection(results.lighthouse)],
@@ -217,6 +260,7 @@ export function readResults(): Results {
     latency: readResult('latency'),
     pan: readResult('pan'),
     load: readResult('load'),
+    saturation: readResult('load-saturation'),
     size: readResult('size'),
     geometry: readResult('geometry'),
     lighthouse: readResult('lighthouse'),

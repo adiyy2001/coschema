@@ -1,7 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { startTestDatabase, type TestDatabase } from '../../scripts/test-database';
 import { describeHardware } from '../lib/hardware';
-import { writeResult } from '../lib/results';
 import { round, summarize } from '../lib/stats';
 import {
   combineWindows,
@@ -9,7 +8,7 @@ import {
   spawnGenerators,
   type GeneratorWorker,
 } from './generator-pool';
-import { parseOptions, type LoadOptions } from './options';
+import type { LoadOptions } from './options';
 import { fetchMetrics, sampleProcess, startServer, type RunningServer } from './server-probe';
 
 function sleep(ms: number): Promise<void> {
@@ -27,6 +26,22 @@ interface WindowResult {
   readonly serverCpuPercent: number;
   readonly serverRssMiB: number;
   readonly generatorBusiestWorker: number;
+}
+
+export interface LoadSummary {
+  readonly operationsPerSecond: number;
+  readonly deliveryP95Ms: number;
+  readonly deliveryP99Ms: number;
+  readonly acknowledgementP95Ms: number;
+  readonly serverCpuPercentOfOneCore: number;
+  readonly busiestGeneratorUtilization: number;
+  readonly disconnects: number;
+}
+
+export interface LoadRun {
+  readonly result: object;
+  readonly summary: LoadSummary;
+  readonly converged: boolean;
 }
 
 async function measureWindow(
@@ -84,7 +99,7 @@ function postgresVersion(): string | undefined {
   }
 }
 
-async function run(options: LoadOptions): Promise<void> {
+export async function runLoad(options: LoadOptions): Promise<LoadRun> {
   let database: TestDatabase | undefined;
   let server: RunningServer | undefined;
   let workers: GeneratorWorker[] = [];
@@ -210,12 +225,20 @@ async function run(options: LoadOptions): Promise<void> {
         'The server runs as a separate process on the same machine. The numbers describe this machine and this run only.',
       ],
     };
-    const target = await writeResult(options.output, result);
     console.log(
       `ops/s ${result.results.opsPerSecond}, delivery p50 ${delivery.p50} ms, p95 ${delivery.p95} ms, p99 ${delivery.p99} ms`,
     );
-    console.log(`rooms converged ${convergedRooms}/${rooms}, written to ${target}`);
-    if (convergedRooms !== rooms) process.exitCode = 1;
+    console.log(`rooms converged ${convergedRooms}/${rooms}`);
+    const summary: LoadSummary = {
+      operationsPerSecond: result.results.opsPerSecond,
+      deliveryP95Ms: delivery.p95,
+      deliveryP99Ms: delivery.p99,
+      acknowledgementP95Ms: acknowledgement.p95,
+      serverCpuPercentOfOneCore: result.results.server.cpuPercentOfOneCore,
+      busiestGeneratorUtilization: result.results.loadGenerator.busiestWorkerEventLoopUtilization,
+      disconnects: result.results.disconnects,
+    };
+    return { result, summary, converged: convergedRooms === rooms };
   } finally {
     await Promise.all(workers.map((worker) => worker.shutdown().catch(() => undefined)));
     if (server !== undefined) {
@@ -225,5 +248,3 @@ async function run(options: LoadOptions): Promise<void> {
     if (database !== undefined) await database.stop();
   }
 }
-
-await run(parseOptions(process.argv.slice(2)));

@@ -18,6 +18,7 @@
     "test:sim": "vitest run --project sim test/property.test.ts",
     "sim": "tsx packages/sim/src/bin.ts",
     "bench:load": "pnpm --filter @coschema/server build && tsx bench/load/main.ts",
+    "bench:saturation": "pnpm --filter @coschema/server build && tsx bench/load/saturation.ts",
     "demo:gif": "pnpm --filter @coschema/editor build && tsx bench/demo-gif/main.ts",
     "report": "tsx scripts/report.ts",
     "coverage:badge": "tsx scripts/coverage-badge.ts",
