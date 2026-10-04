@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type WebSocketRoute } from '@playwright/test';
 import { measureEditLatency } from '../../bench/latency/measure';
 import {
   ONLINE,
@@ -72,6 +72,62 @@ test.describe('collaboration @collab', () => {
     expect(merged['tank']).toMatch(/Header/u);
     expect(merged['tank']).toMatch(/Reser/u);
     await anna.page.screenshot({ path: testInfo.outputPath('merged-anna.png') });
+    await anna.context.close();
+    await bartek.context.close();
+  });
+
+  test('survives a real dropped WebSocket and merges the edits made meanwhile @collab', async ({
+    browser,
+  }) => {
+    const room = uniqueRoom('socket-cut');
+    const { context, page } = await newClient(browser, 'Anna');
+    const sockets: WebSocketRoute[] = [];
+    let blocked = false;
+    await page.routeWebSocket(/\/rooms\//u, async (socket) => {
+      if (blocked) {
+        await socket.close();
+        return;
+      }
+      socket.connectToServer();
+      sockets.push(socket);
+    });
+    await page.goto(roomUrl(room));
+    await expect(page.locator(ONLINE)).toBeVisible();
+    const bartek = await joinRoom(browser, room, 'Bartek');
+    blocked = true;
+    for (const socket of sockets) await socket.close();
+    await expect(page.locator('[data-connection]')).toHaveAttribute('data-state', 'offline');
+    await dragNode(page, 'pump-a', 0, -48);
+    await renameNode(page, 'outlet', 'Drain');
+    await expect(page.locator('[data-pending]')).toContainText('2 changes waiting');
+    await expect(bartek.page.locator('[data-node-id="outlet"]')).toContainText('Outlet valve');
+    blocked = false;
+    await expect(page.locator(ONLINE)).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('[data-pending]')).toHaveCount(0);
+    await expect(bartek.page.locator('[data-node-id="outlet"]')).toContainText('Drain');
+    await expect
+      .poll(async () => JSON.stringify(await nodePositions(bartek.page)))
+      .toBe(JSON.stringify(await nodePositions(page)));
+    await context.close();
+    await bartek.context.close();
+  });
+
+  test('notices a lost network at once and reconnects when it returns @collab', async ({
+    browser,
+  }) => {
+    const room = uniqueRoom('network');
+    const anna = await joinRoom(browser, room, 'Anna');
+    const bartek = await joinRoom(browser, room, 'Bartek');
+    await anna.context.setOffline(true);
+    await expect(anna.page.locator('[data-connection]')).toHaveAttribute('data-state', 'offline', {
+      timeout: 3000,
+    });
+    await renameNode(anna.page, 'outlet', 'Drain');
+    await expect(anna.page.locator('[data-pending]')).toContainText('1 change waiting');
+    await anna.context.setOffline(false);
+    await expect(anna.page.locator(ONLINE)).toBeVisible({ timeout: 10_000 });
+    await expect(anna.page.locator('[data-pending]')).toHaveCount(0);
+    await expect(bartek.page.locator('[data-node-id="outlet"]')).toContainText('Drain');
     await anna.context.close();
     await bartek.context.close();
   });
