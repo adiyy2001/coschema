@@ -1,10 +1,14 @@
 import { createNode, getNodes, initializeDocument } from '@coschema/model';
 import { SyncClient, createWebSocketTransport, systemClock } from '@coschema/sync';
-import { spawn } from 'node:child_process';
-import { resolve } from 'node:path';
+import { execFileSync, spawn } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import * as Y from 'yjs';
 
-const ROOT = resolve(import.meta.dirname, '../..');
+const SOURCE = resolve(import.meta.dirname, '../..');
+const WORKSPACE = mkdtempSync(join(tmpdir(), 'coschema-smoke-'));
+const ROOT = join(WORKSPACE, 'coschema');
 const EDITOR = 'http://127.0.0.1:4280';
 const SERVER = 'http://127.0.0.1:4218';
 const ROOM = `smoke-${Date.now().toString(36)}`;
@@ -78,6 +82,8 @@ async function syncThroughProxy(): Promise<void> {
 }
 
 async function run(): Promise<void> {
+  execFileSync('git', ['clone', '--quiet', '--local', SOURCE, ROOT], { stdio: 'inherit' });
+  console.log(`cloned HEAD of ${SOURCE} into ${ROOT}`);
   await compose('up', '--build', '-d', '--wait');
   await expectText(`${SERVER}/healthz`, 'ok');
   await expectText(`${EDITOR}/`, '<cs-root');
@@ -93,4 +99,5 @@ try {
   process.exitCode = 1;
 } finally {
   await compose('down', '-v').catch(() => undefined);
+  rmSync(WORKSPACE, { recursive: true, force: true });
 }
