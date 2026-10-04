@@ -44,10 +44,14 @@ test.describe('accessibility @a11y', () => {
     await page.screenshot({ path: testInfo.outputPath('focus-ring.png') });
 
     await page.keyboard.press('n');
-    const secondId = await focusedId(page);
-    expect(secondId).not.toBe(firstId);
+    await expect
+      .poll(async () => {
+        const id = await focusedId(page);
+        return id !== null && id !== firstId;
+      })
+      .toBe(true);
     await page.keyboard.press('p');
-    expect(await focusedId(page)).toBe(firstId);
+    await expect.poll(() => focusedId(page)).toBe(firstId);
 
     const before = await worldPosition(focused);
     await page.keyboard.press('ArrowRight');
@@ -75,7 +79,7 @@ test.describe('accessibility @a11y', () => {
     await page.keyboard.press('Enter');
     await expect.poll(async () => (await counts(page)).edges).toBe(edges + 1);
     await expect(liveRegion(page)).toContainText('Connected');
-    expect((await focusedId(page)) !== null).toBe(true);
+    await expect.poll(() => focusedId(page)).not.toBeNull();
 
     await page.keyboard.press('Control+z');
     await expect.poll(async () => (await counts(page)).edges).toBe(edges);
@@ -100,7 +104,7 @@ test.describe('accessibility @a11y', () => {
     await page.screenshot({ path: testInfo.outputPath('shortcuts.png') });
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
-    expect(await focusedId(page)).toBe(before);
+    await expect.poll(() => focusedId(page)).toBe(before);
   });
 
   test('skip link moves focus to the main landmark @a11y', async ({ page }) => {
