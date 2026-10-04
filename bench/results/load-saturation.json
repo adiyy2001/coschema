@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-10-04T00:58:18.889Z",
+  "hardware": {
+    "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": 20,
+    "ramGiB": 15.5,
+    "os": "linux 6.6.87.2-microsoft-standard-WSL2",
+    "arch": "x64",
+    "node": "v24.13.0"
+  },
+  "configuration": {
+    "store": "postgres",
+    "rooms": 50,
+    "clientsPerRoom": 10,
+    "ratesPerClient": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "windowsPerStep": 2,
+    "windowSeconds": 5,
+    "p95LimitMs": 200,
+    "minDeliveredShare": 0.95
+  },
+  "maxSustainedOpsPerSecond": 3986.65,
+  "firstFailingStep": {
+    "offeredOpsPerSecond": 8000,
+    "achievedOpsPerSecond": 7670.6,
+    "deliveryP95Ms": 854.64,
+    "deliveryP99Ms": 1071.34,
+    "acknowledgementP95Ms": null,
+    "serverCpuPercentOfOneCore": 116.03,
+    "busiestGeneratorUtilization": 0.806,
+    "disconnects": 0,
+    "converged": true,
+    "sustained": false,
+    "stoppedBecause": "delivery p95 above 200 ms"
+  },
+  "steps": [
+    {
+      "offeredOpsPerSecond": 2000,
+      "achievedOpsPerSecond": 2002.91,
+      "deliveryP95Ms": 1.69,
+      "deliveryP99Ms": 3.72,
+      "acknowledgementP95Ms": 56.4,
+      "serverCpuPercentOfOneCore": 50.58,
+      "busiestGeneratorUtilization": 0.256,
+      "disconnects": 0,
+      "converged": true,
+      "sustained": true
+    },
+    {
+      "offeredOpsPerSecond": 4000,
+      "achievedOpsPerSecond": 3986.65,
+      "deliveryP95Ms": 15.77,
+      "deliveryP99Ms": 44.88,
+      "acknowledgementP95Ms": 63.09,
+      "serverCpuPercentOfOneCore": 84.34,
+      "busiestGeneratorUtilization": 0.524,
+      "disconnects": 0,
+      "converged": true,
+      "sustained": true
+    },
+    {
+      "offeredOpsPerSecond": 8000,
+      "achievedOpsPerSecond": 7670.6,
+      "deliveryP95Ms": 854.64,
+      "deliveryP99Ms": 1071.34,
+      "acknowledgementP95Ms": null,
+      "serverCpuPercentOfOneCore": 116.03,
+      "busiestGeneratorUtilization": 0.806,
+      "disconnects": 0,
+      "converged": true,
+      "sustained": false,
+      "stoppedBecause": "delivery p95 above 200 ms"
+    }
+  ],
+  "notes": [
+    "Every step is a fresh server and a fresh database. A step counts as sustained when delivery p95 stays under the limit, at least 95% of the offered operations complete, every room converges, nobody is disconnected and the load generator itself is below 90% event loop utilization.",
+    "When the first failing step names the load generator, the sustained rate is a lower bound: the server was not the bottleneck."
+  ]
+}

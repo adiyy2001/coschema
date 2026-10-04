@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-03T23:49:24.830Z",
-  "revision": "6b1a252",
+  "generatedAt": "2026-10-04T01:13:58.290Z",
+  "revision": "556bebb",
   "hardware": {
     "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
     "cores": 20,
@@ -23,11 +23,11 @@
       "warmupEdits": 10,
       "latencyMs": {
         "samples": 200,
-        "mean": 13.55,
-        "p50": 14,
-        "p95": 15,
-        "p99": 18,
-        "max": 30
+        "mean": 13.24,
+        "p50": 13,
+        "p95": 18,
+        "p99": 26,
+        "max": 28
       },
       "share": {
         "under50": 1,
@@ -43,11 +43,11 @@
       "warmupEdits": 10,
       "latencyMs": {
         "samples": 200,
-        "mean": 14.24,
+        "mean": 14.18,
         "p50": 14,
         "p95": 15,
         "p99": 16,
-        "max": 17
+        "max": 16
       },
       "share": {
         "under50": 1,

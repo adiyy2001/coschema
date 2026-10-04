@@ -93,7 +93,7 @@ It is a laptop under WSL2 with other jobs running now and then, and the browser 
 
 ### Convergence simulator
 
-`pnpm sim --seeds 5000` (add `--bail` to stop at the first failing seed) prints `seeds=5,000 failed=0 duration=76.3s` (65.5 seeds per second). Over those seeds the simulated network carried 1,756,564 messages, lost 12,715 of them and duplicated 6,418. CI runs the same 5,000 seeds with a time budget, a 500 run fast-check property, and a run with an injected bug that must fail. The details of the check are in [ADR 0012](docs/adr/0012-convergence-simulator.md).
+`pnpm sim --seeds 5000` (add `--bail` to stop at the first failing seed) prints `seeds=5,000 failed=0 duration=90.9s` (55 seeds per second). Over those seeds the simulated network carried 1,756,564 messages, lost 12,715 of them and duplicated 6,418. CI runs the same 5,000 seeds with a time budget, a 500 run fast-check property, and a run with an injected bug that must fail. The details of the check are in [ADR 0012](docs/adr/0012-convergence-simulator.md).
 
 ### Edit to remote render, on localhost
 
@@ -101,8 +101,8 @@ The target is a p95 under 200 ms. Two browser contexts in one room, 200 edits af
 
 | Store | Edits | p50 ms | p95 ms | p99 ms | max ms |
 | --- | --- | --- | --- | --- | --- |
-| memory | 200 | 14 | 15 | 18 | 30 |
-| postgres | 200 | 14 | 15 | 16 | 17 |
+| memory | 200 | 13 | 18 | 26 | 28 |
+| postgres | 200 | 14 | 15 | 16 | 16 |
 
 ### Panning with 5,000 nodes
 
@@ -121,7 +121,17 @@ The target is 60 fps. Three runs per zoom level with synthetic wheel events. Bel
 
 ### Load test
 
-50 rooms with 10 clients each, 5 windows of 6 seconds, PostgreSQL store, one server process: 1,991.03 operations per second. Delivery from a write in one client to the observer of another had p50 0.61 ms, p95 3.73 ms and p99 11.76 ms. The persistence ack took 57.83 ms at p95, which includes the 50 ms batch window. All 50 rooms converged and nobody was disconnected. The server used 56.48% of one core and peaked at 204.57 MiB. This says nothing about several server instances.
+50 rooms with 10 clients each, 5 windows of 6 seconds, PostgreSQL store, one server process. The generator is paced: every client does 4 operations per second, so 2,000 are offered per second and the server completed 1,990.32 of them. That figure is the load I offered. Capacity comes from the ramp below. At that load delivery from a write in one client to the observer of another had p50 1.4 ms, p95 9.42 ms and p99 24 ms. The persistence ack took 65.5 ms at p95, which includes the 50 ms batch window. All 50 rooms converged and nobody was disconnected. The server used 76.29% of one core and peaked at 202.64 MiB.
+
+To find the capacity, `pnpm bench:saturation` repeats the run at higher rates, each on a fresh server and database, until delivery p95 passes 200 ms, fewer than 95% of the offered operations complete, a room fails to converge or the generator itself passes 90% utilization. The last step that held was 3,987 operations per second:
+
+| Offered ops/s | Completed ops/s | Delivery p95 ms | Server CPU, % of one core | Sustained |
+| --- | --- | --- | --- | --- |
+| 2,000 | 2,003 | 1.69 | 50.58 | yes |
+| 4,000 | 3,987 | 15.77 | 84.34 | yes |
+| 8,000 | 7,671 | 854.64 | 116.03 | no, delivery p95 above 200 ms |
+
+The ramp only has steps of 2,000, 4,000 and 8,000 offered operations per second, so one Node process on this machine holds at least 3,987 and gives up somewhere before 7,671, at roughly one core. The numbers describe one process and say nothing about several server instances.
 
 ### Document size before and after compaction
 
@@ -174,11 +184,11 @@ The dev server is at <http://127.0.0.1:4217>. The editor in dev mode does not pr
 | `pnpm lint` | ESLint with strict type-checked rules, Prettier, a no-comments check and a no-dashes check, a check that only one Yjs is installed |
 | `pnpm typecheck` | `tsc` for every package, `ngc` with template checking for the editor |
 | `pnpm check:licenses` | Fails on any dependency outside MIT, Apache-2.0, BSD, ISC and 0BSD, with the named exceptions of [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md) |
-| `pnpm test` | 647 unit tests in the packages, the server and the scripts, and 343 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
-| `pnpm test:coverage` | The same with thresholds: 90% of lines for core logic, 80% for the rest. Lines covered: 98.74% in the packages and the server, 96.81% in the editor |
+| `pnpm test` | 654 unit tests in the packages, the server and the scripts, and 351 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
+| `pnpm test:coverage` | The same with thresholds: 90% of lines for core logic, 80% for the rest. Lines covered: 98.75% in the packages and the server, 96.85% in the editor |
 | `pnpm test:integration` | 40 server tests against real PostgreSQL started in Docker: reconnect with partial state, compaction keeps the document, appends during compaction, bad tokens are rejected, idle unloading, shutdown flush |
 | `pnpm test:sim` and `pnpm sim --seeds 5000` | The fast-check convergence property and the seed loop |
-| `pnpm test:e2e` | 39 Playwright tests on the production build, with several browser contexts: an edit appears for the other user, offline edits merge after reconnect, the keyboard path, the demo page, export. `pnpm test:e2e:postgres` runs them against PostgreSQL |
+| `pnpm test:e2e` | 41 Playwright tests on the production build, with several browser contexts: an edit appears for the other user, offline edits merge after reconnect, the keyboard path, the demo page, export. `pnpm test:e2e:postgres` runs them against PostgreSQL |
 | `pnpm test:compose` | Clones the committed HEAD into a temporary directory, runs `docker compose up --build` there, syncs an edit through nginx, then `down -v` |
 | `pnpm bench:load`, `bench:saturation`, `bench:latency`, `bench:pan`, `bench:size`, `bench:geometry`, `lighthouse` | The measurements above |
 | `pnpm verify` | Lint, typecheck, licences, coverage, integration, simulator and build in one go |

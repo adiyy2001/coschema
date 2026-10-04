@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T23:50:04.198Z",
+  "generatedAt": "2026-10-04T01:10:00.567Z",
   "hardware": {
     "cpuModel": "12th Gen Intel(R) Core(TM) i7-12700H",
     "cores": 20,
@@ -22,105 +22,105 @@
     "batchWindowMs": 50
   },
   "results": {
-    "operations": 60069,
-    "opsPerSecond": 1991.03,
-    "serverAppliedOpsPerSecond": 1996.69,
-    "deliveries": 540647,
-    "deliveriesPerSecond": 17920.1,
+    "operations": 59975,
+    "opsPerSecond": 1990.32,
+    "serverAppliedOpsPerSecond": 1997.82,
+    "deliveries": 539731,
+    "deliveriesPerSecond": 17911.44,
     "latencyMs": {
       "description": "from the write in one client to the observer callback in another client of the same room",
-      "p50": 0.61,
-      "p95": 3.73,
-      "p99": 11.76,
-      "mean": 1.19,
-      "max": 35.89
+      "p50": 1.4,
+      "p95": 9.42,
+      "p99": 24,
+      "mean": 2.73,
+      "max": 51.4
     },
     "acknowledgementMs": {
       "description": "from the first unacknowledged write of a client to its persistence ack",
-      "samples": 60091,
-      "p50": 43.53,
-      "p95": 57.83,
-      "p99": 68.09,
-      "max": 113.07
+      "samples": 59924,
+      "p50": 46.38,
+      "p95": 65.5,
+      "p99": 95.44,
+      "max": 307.63
     },
     "windows": [
       {
         "seconds": 6,
-        "operations": 12022,
-        "opsPerSecond": 2002.03,
-        "deliveries": 108198,
-        "deliveryP50Ms": 0.53,
-        "deliveryP95Ms": 1.65,
-        "deliveryP99Ms": 3.54,
-        "serverCpuPercent": 50.79,
-        "serverRssMiB": 147.2,
-        "generatorBusiestWorker": 0.247
+        "operations": 12000,
+        "opsPerSecond": 1998.98,
+        "deliveries": 108018,
+        "deliveryP50Ms": 3.02,
+        "deliveryP95Ms": 14.71,
+        "deliveryP99Ms": 21.68,
+        "serverCpuPercent": 96.28,
+        "serverRssMiB": 147.75,
+        "generatorBusiestWorker": 0.601
       },
       {
-        "seconds": 6.02,
-        "operations": 12030,
-        "opsPerSecond": 1998.3,
+        "seconds": 6,
+        "operations": 12035,
+        "opsPerSecond": 2004.52,
         "deliveries": 108288,
-        "deliveryP50Ms": 0.46,
-        "deliveryP95Ms": 1.31,
-        "deliveryP99Ms": 4.64,
-        "serverCpuPercent": 46.34,
-        "serverRssMiB": 203.61,
-        "generatorBusiestWorker": 0.206
+        "deliveryP50Ms": 1.93,
+        "deliveryP95Ms": 22.01,
+        "deliveryP99Ms": 40.07,
+        "serverCpuPercent": 84.44,
+        "serverRssMiB": 200.77,
+        "generatorBusiestWorker": 0.485
+      },
+      {
+        "seconds": 6,
+        "operations": 11994,
+        "opsPerSecond": 1997.7,
+        "deliveries": 107937,
+        "deliveryP50Ms": 1.06,
+        "deliveryP95Ms": 3.55,
+        "deliveryP99Ms": 5.9,
+        "serverCpuPercent": 70.79,
+        "serverRssMiB": 201.86,
+        "generatorBusiestWorker": 0.399
       },
       {
         "seconds": 6.01,
-        "operations": 11975,
-        "opsPerSecond": 1994.02,
-        "deliveries": 107757,
-        "deliveryP50Ms": 0.86,
-        "deliveryP95Ms": 11.61,
-        "deliveryP99Ms": 18.96,
-        "serverCpuPercent": 63.61,
-        "serverRssMiB": 204.42,
-        "generatorBusiestWorker": 0.372
+        "operations": 11947,
+        "opsPerSecond": 1986.33,
+        "deliveries": 107488,
+        "deliveryP50Ms": 1.56,
+        "deliveryP95Ms": 5.01,
+        "deliveryP99Ms": 7.81,
+        "serverCpuPercent": 78.81,
+        "serverRssMiB": 202.64,
+        "generatorBusiestWorker": 0.471
       },
       {
-        "seconds": 6.03,
-        "operations": 12059,
-        "opsPerSecond": 1999.78,
-        "deliveries": 108539,
-        "deliveryP50Ms": 1.01,
-        "deliveryP95Ms": 3.71,
-        "deliveryP99Ms": 5.58,
-        "serverCpuPercent": 68.49,
-        "serverRssMiB": 204.57,
-        "generatorBusiestWorker": 0.375
-      },
-      {
-        "seconds": 6.02,
-        "operations": 11983,
-        "opsPerSecond": 1989.61,
-        "deliveries": 107865,
-        "deliveryP50Ms": 0.61,
-        "deliveryP95Ms": 1.78,
-        "deliveryP99Ms": 3,
-        "serverCpuPercent": 52.97,
-        "serverRssMiB": 204.57,
-        "generatorBusiestWorker": 0.264
+        "seconds": 6.01,
+        "operations": 11999,
+        "opsPerSecond": 1997.75,
+        "deliveries": 108000,
+        "deliveryP50Ms": 0.53,
+        "deliveryP95Ms": 2.41,
+        "deliveryP99Ms": 4,
+        "serverCpuPercent": 50.28,
+        "serverRssMiB": 202.64,
+        "generatorBusiestWorker": 0.267
       }
     ],
     "p95SpreadMs": {
-      "min": 1.31,
-      "max": 11.61
+      "min": 2.41,
+      "max": 22.01
     },
     "convergedRooms": 50,
     "rooms": 50,
     "disconnects": 0,
     "denials": 0,
     "server": {
-      "cpuPercentOfOneCore": 56.48,
-      "rssMiB": 204.57,
-      "peakRssMiB": 204.57,
+      "cpuPercentOfOneCore": 76.29,
+      "rssMiB": 202.64,
+      "peakRssMiB": 202.64,
       "counters": {
-        "updates_applied_total": 68899,
-        "batches_flushed_total": 23330,
-        "bytes_persisted_total": 2646167,
+        "updates_applied_total": 68831,
+        "batches_flushed_total": 23026,
+        "bytes_persisted_total": 2641220,
         "compactions_total": 0,
         "auth_failures_total": 0,
         "persistence_errors_total": 0,
@@ -132,9 +132,9 @@
       }
     },
     "loadGenerator": {
-      "processCpuPercentOfOneCore": 126.48,
-      "busiestWorkerEventLoopUtilization": 0.375,
-      "worstEventLoopDelayP99Ms": 15.3
+      "processCpuPercentOfOneCore": 184.75,
+      "busiestWorkerEventLoopUtilization": 0.601,
+      "worstEventLoopDelayP99Ms": 16.59
     }
   },
   "notes": [
