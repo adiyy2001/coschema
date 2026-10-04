@@ -4,9 +4,9 @@ A real-time collaborative diagram editor with live cursors, offline editing, per
 
 ![Two editors side by side: one goes offline, both edit, the link comes back and the copies merge. Then live cursors and follow mode.](docs/media/demo.gif)
 
-Live demo: not deployed yet. <!-- ADRIAN: paste the URL of the deployed demo here -->
+Live demo: not deployed yet.
 
-[![CI](https://github.com/adrianturbinski/coschema/actions/workflows/ci.yml/badge.svg)](https://github.com/adrianturbinski/coschema/actions/workflows/ci.yml)
+[![CI](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml/badge.svg)](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml)
 ![Coverage of lines, packages, server and editor together](docs/media/coverage.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -16,7 +16,7 @@ The GIF is the `/demo` page: two editors, each behind its own simulated network 
 
 Diagram editors are my day job. I work on software that generates single-line diagrams of high-voltage electrical substations, with Angular and diagram rendering on the front end and Java and Quarkus behind it. In real teams several people edit the same diagram at the same time.
 
-I wanted the hard parts of collaboration: keeping a graph valid when two people change it at once, undoing only your own edits, and merging offline work cleanly. The editor is also keyboard operable and announces remote changes to screen readers, because collaborative canvases rarely are. <!-- ADRIAN: add one or two sentences about a concrete moment at work where two people edited one diagram, if you want one -->
+I wanted the hard parts of collaboration: keeping a graph valid when two people change it at once, undoing only your own edits, and merging offline work cleanly. The editor is also keyboard operable and announces remote changes to screen readers, because collaborative canvases rarely are.
 
 ## What is hard about it
 
@@ -160,7 +160,7 @@ The keyboard model differs from the obvious reading of "Tab through nodes". The 
 ## Run it locally
 
 ```
-git clone https://github.com/adrianturbinski/coschema.git
+git clone https://github.com/adiyy2001/coschema.git
 cd coschema
 docker compose up --build
 ```
