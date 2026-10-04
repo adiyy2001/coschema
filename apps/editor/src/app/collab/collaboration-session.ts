@@ -35,6 +35,24 @@ export function defaultPersistence(): PersistenceFactory | undefined {
   return typeof indexedDB === 'undefined' ? undefined : indexedDbPersistence;
 }
 
+export interface NetworkEvents {
+  subscribe(handlers: { readonly lost: () => void; readonly restored: () => void }): () => void;
+}
+
+export function browserNetworkEvents(): NetworkEvents | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return {
+    subscribe: ({ lost, restored }) => {
+      window.addEventListener('offline', lost);
+      window.addEventListener('online', restored);
+      return () => {
+        window.removeEventListener('offline', lost);
+        window.removeEventListener('online', restored);
+      };
+    },
+  };
+}
+
 export interface CollaborationOptions {
   readonly doc: Y.Doc;
   readonly room: string;
@@ -44,6 +62,7 @@ export interface CollaborationOptions {
   readonly random: RandomSource;
   readonly storage?: KeyValueStorage;
   readonly persistence?: PersistenceFactory;
+  readonly network?: NetworkEvents;
   readonly prepare: () => void;
   readonly onFirstSync: () => void;
   readonly backoff?: BackoffOptions;
@@ -84,6 +103,7 @@ export class CollaborationSession {
   private refreshedAfterDenial = false;
   private firstSyncDone = false;
   private unsubscribe: (() => void) | undefined;
+  private unsubscribeNetwork: (() => void) | undefined;
   private destroyed = false;
   private started = false;
 
@@ -121,6 +141,14 @@ export class CollaborationSession {
       this.apply(snapshot);
     });
     this.apply(client.snapshot);
+    this.unsubscribeNetwork = this.options.network?.subscribe({
+      lost: () => {
+        if (!this.manuallyOffline()) client.networkLost();
+      },
+      restored: () => {
+        if (!this.manuallyOffline()) client.networkRestored();
+      },
+    });
     await this.connectWithToken();
   }
 
@@ -141,6 +169,7 @@ export class CollaborationSession {
     this.destroyed = true;
     this.cancelTokenRetry();
     this.unsubscribe?.();
+    this.unsubscribeNetwork?.();
     this.client?.destroy();
     this.awareness.destroy();
     void this.disk?.destroy();

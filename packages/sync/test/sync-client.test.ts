@@ -433,6 +433,39 @@ describe('SyncClient reconnects', () => {
     expect(client.currentStatus).toBe('online');
   });
 
+  it('goes to waiting at once when the network is lost and reconnects at once when it returns', () => {
+    const harness = createHarness();
+    const client = harness.client({ ackTimeoutMs: 60_000 });
+    client.start();
+    harness.network.settle();
+    expect(client.currentStatus).toBe('online');
+    client.networkLost();
+    expect(client.currentStatus).toBe('waiting');
+    setLabel(client.doc, 'a', '1');
+    expect(client.pendingCount).toBe(1);
+    client.networkRestored();
+    harness.network.settle();
+    expect(client.currentStatus).toBe('online');
+    expect(client.pendingCount).toBe(0);
+    expect(labelsOf(harness.hub.doc)).toEqual({ a: '1' });
+  });
+
+  it('ignores network events while stopped, denied or already waiting', () => {
+    const harness = createHarness();
+    const client = harness.client();
+    client.networkLost();
+    client.networkRestored();
+    expect(client.currentStatus).toBe('stopped');
+    client.start();
+    harness.network.settle();
+    client.networkLost();
+    client.networkLost();
+    expect(client.currentStatus).toBe('waiting');
+    client.stop();
+    client.networkRestored();
+    expect(client.currentStatus).toBe('stopped');
+  });
+
   it('stops reconnecting once the hub denies the token', async () => {
     const harness = createHarness({ authenticate: () => ({ ok: false, reason: 'expired' }) });
     let connects = 0;

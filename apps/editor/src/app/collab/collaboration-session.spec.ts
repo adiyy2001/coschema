@@ -165,6 +165,58 @@ describe('CollaborationSession', () => {
     session.destroy();
   });
 
+  it('goes offline when the browser reports a lost network and syncs when it returns', async () => {
+    const f = fixture();
+    let handlers: { lost: () => void; restored: () => void } | undefined;
+    let unsubscribed = false;
+    const session = f.make({
+      network: {
+        subscribe: (given) => {
+          handlers = given;
+          return () => {
+            unsubscribed = true;
+          };
+        },
+      },
+    });
+    await session.start();
+    f.network.settle();
+    expect(session.state()).toBe('online');
+    handlers?.lost();
+    expect(session.state()).toBe('offline');
+    editLocally(f.doc, 'a', '1');
+    expect(session.pending()).toBe(1);
+    handlers?.restored();
+    f.network.settle();
+    expect(session.state()).toBe('online');
+    expect(session.pending()).toBe(0);
+    expect(f.hub.doc.getMap('labels').toJSON()).toEqual({ a: '1' });
+    session.destroy();
+    expect(unsubscribed).toBe(true);
+  });
+
+  it('does not reconnect on a network event while the person is offline on purpose', async () => {
+    const f = fixture();
+    let handlers: { lost: () => void; restored: () => void } | undefined;
+    const session = f.make({
+      network: {
+        subscribe: (given) => {
+          handlers = given;
+          return () => undefined;
+        },
+      },
+    });
+    await session.start();
+    f.network.settle();
+    session.setOffline(true);
+    handlers?.lost();
+    handlers?.restored();
+    f.network.settle();
+    expect(session.state()).toBe('offline');
+    expect(session.manuallyOffline()).toBe(true);
+    session.destroy();
+  });
+
   it('ignores a second switch to the same state', async () => {
     const f = fixture();
     const session = f.make();

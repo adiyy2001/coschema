@@ -17,7 +17,9 @@ import { followStep } from '../presence/follow';
 import { PresenceStore } from '../presence/presence-store';
 import {
   CollaborationSession,
+  browserNetworkEvents,
   defaultPersistence,
+  type NetworkEvents,
   type PersistenceFactory,
 } from './collaboration-session';
 import { FETCH_JSON, socketUrl, tokenProviderFor, type ConnectionTarget } from './connection';
@@ -46,6 +48,11 @@ export const COLLAB_PERSISTENCE = new InjectionToken<PersistenceFactory | undefi
   'COLLAB_PERSISTENCE',
   { providedIn: 'root', factory: defaultPersistence },
 );
+
+export const COLLAB_NETWORK = new InjectionToken<NetworkEvents | undefined>('COLLAB_NETWORK', {
+  providedIn: 'root',
+  factory: browserNetworkEvents,
+});
 
 export type TransportFactory = (target: ConnectionTarget) => Transport;
 
@@ -89,6 +96,7 @@ export class Collaboration {
       random,
       ...(this.storage === undefined ? {} : { storage: this.storage }),
       ...optionalPersistence(inject(COLLAB_PERSISTENCE)),
+      ...optionalNetwork(inject(COLLAB_NETWORK)),
       prepare: () => {
         this.documents.prepare();
       },
@@ -186,4 +194,8 @@ function optionalPersistence(factory: PersistenceFactory | undefined): {
   persistence?: PersistenceFactory;
 } {
   return factory === undefined ? {} : { persistence: factory };
+}
+
+function optionalNetwork(events: NetworkEvents | undefined): { network?: NetworkEvents } {
+  return events === undefined ? {} : { network: events };
 }

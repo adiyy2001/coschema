@@ -139,6 +139,17 @@ export class SyncClient {
     this.connectNow();
   }
 
+  networkLost(): void {
+    if (this.destroyed || this.status === 'stopped' || this.status === 'denied') return;
+    this.clearReconnectTimer();
+    this.loseConnection();
+  }
+
+  networkRestored(): void {
+    if (this.destroyed || this.status !== 'waiting') return;
+    this.reconnect();
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.stop();
