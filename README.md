@@ -172,7 +172,7 @@ The dev server is at <http://127.0.0.1:4217>. The editor in dev mode does not pr
 | `pnpm lint` | ESLint with strict type-checked rules, Prettier, a no-comments check and a no-dashes check, a check that only one Yjs is installed |
 | `pnpm typecheck` | `tsc` for every package, `ngc` with template checking for the editor |
 | `pnpm check:licenses` | Fails on any dependency outside MIT, Apache-2.0, BSD, ISC and 0BSD, with the named exceptions of [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md) |
-| `pnpm test` | 639 unit tests in the packages and the server and 343 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
+| `pnpm test` | 647 unit tests in the packages, the server and the scripts, and 343 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
 | `pnpm test:coverage` | The same with thresholds: 90% of lines for core logic, 80% for the rest. Lines covered: 98.74% in the packages and the server, 96.81% in the editor |
 | `pnpm test:integration` | 40 server tests against real PostgreSQL started in Docker: reconnect with partial state, compaction keeps the document, appends during compaction, bad tokens are rejected, idle unloading, shutdown flush |
 | `pnpm test:sim` and `pnpm sim --seeds 5000` | The fast-check convergence property and the seed loop |
