@@ -25,6 +25,7 @@ import type { Selection } from '../interaction/types';
 import { Announcements } from './announcements';
 import { portsBetween } from './connect-ports';
 import { nodeName, shapeName } from './describe-change';
+import { freePosition } from './free-position';
 import {
   BROWSE,
   reduceKey,
@@ -154,13 +155,17 @@ export class KeyboardController {
     ];
     const [width, height] = DEFAULT_NODE_SIZES[DEFAULT_NEW_NODE];
     const grid = this.interaction.snap().gridSize;
-    const position: Vec2 = [
+    const preferred: Vec2 = [
       snapToGrid(center[0] - width / 2, grid),
       snapToGrid(center[1] - height / 2, grid),
     ];
+    const occupied = this.session.graph.nodeGrid.all().map((entry) => entry.rect);
+    const position = freePosition(preferred, [width, height], occupied, grid);
     const id = this.interaction.createNodeAt(DEFAULT_NEW_NODE, position);
     this.session.graph.flush();
-    this.announcements.announce(`Added a ${shapeName(DEFAULT_NEW_NODE)}.`);
+    const moved = position[0] !== preferred[0] || position[1] !== preferred[1];
+    const where = moved ? ' next to the existing nodes' : ' in the middle of the view';
+    this.announcements.announce(`Added a ${shapeName(DEFAULT_NEW_NODE)}${where}.`);
     this.focusNode(id);
   }
 
