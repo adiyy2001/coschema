@@ -127,9 +127,9 @@ test.describe('editor @single', () => {
     expect(Math.abs(after.x - anchor.x)).toBeLessThan(3);
     expect(Math.abs(after.y - anchor.y)).toBeLessThan(3);
     await page.locator('[data-action="zoom-reset"]').click();
-    expect(await zoomPercent(page)).toBe(100);
+    await expect.poll(() => zoomPercent(page)).toBe(100);
     await page.locator('[data-action="zoom-out"]').click();
-    expect(await zoomPercent(page)).toBe(80);
+    await expect.poll(() => zoomPercent(page)).toBe(80);
   });
 
   test('pinch zooms with two touches over CDP @single @must-have', async ({ browser }) => {

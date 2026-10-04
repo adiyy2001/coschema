@@ -58,7 +58,9 @@ test.describe('demo page @demo', () => {
     await openDemo(page);
     await expect(page).toHaveTitle('Live demo | coschema');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Live collaboration demo');
-    expect(await positionsIn(pane(page, 'Ada'))).toEqual(await positionsIn(pane(page, 'Bruno')));
+    await expect
+      .poll(() => positionsIn(pane(page, 'Ada')))
+      .toEqual(await positionsIn(pane(page, 'Bruno')));
     await expect(pane(page, 'Ada').locator('[data-link-state]')).toHaveText('Online');
     await expect(pane(page, 'Ada').locator('[data-action="follow"]')).toContainText('Bruno');
     await page.screenshot({ path: testInfo.outputPath('demo.png'), fullPage: true });
@@ -92,7 +94,9 @@ test.describe('demo page @demo', () => {
     await dragIn(page, ada, 'intake', 96, 40);
     await dragIn(page, bruno, 'pump-b', 0, 64);
     await expect(ada.locator('[data-pending]')).toBeVisible();
-    expect((await positionsIn(ada))['pump-b']).not.toBe((await positionsIn(bruno))['pump-b']);
+    await expect
+      .poll(async () => (await positionsIn(ada))['pump-b'] !== (await positionsIn(bruno))['pump-b'])
+      .toBe(true);
     await page.screenshot({ path: testInfo.outputPath('demo-offline.png'), fullPage: true });
     await ada.locator('[data-link-offline]').uncheck();
     await expect(ada.locator('[data-connection][data-state="online"]')).toBeVisible({
@@ -170,7 +174,9 @@ test.describe('demo page @demo', () => {
       ).toBeVisible();
       await expect(pane(page, name).locator('[data-node-id]')).toHaveCount(7);
     }
-    expect(await positionsIn(pane(page, 'Ada'))).toEqual(await positionsIn(pane(page, 'Bruno')));
+    await expect
+      .poll(() => positionsIn(pane(page, 'Ada')))
+      .toEqual(await positionsIn(pane(page, 'Bruno')));
   });
 
   test('a preset applies to every link @demo', async ({ page }) => {

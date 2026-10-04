@@ -34,7 +34,7 @@ test.describe('collaboration @collab', () => {
       contentType: 'application/json',
     });
     expect(worst, `p95 ${worst} ms, samples ${samples.join(',')}`).toBeLessThan(LATENCY_BUDGET_MS);
-    expect(await nodePositions(bartek.page)).toEqual(await nodePositions(anna.page));
+    await expect.poll(() => nodePositions(bartek.page)).toEqual(await nodePositions(anna.page));
     await anna.context.close();
     await bartek.context.close();
   });
@@ -193,8 +193,13 @@ test.describe('collaboration @collab', () => {
     await expect(follow).toHaveAttribute('aria-pressed', 'true');
     const zoomOf = async (page: typeof anna.page): Promise<string> =>
       (await page.locator('[data-action="zoom-reset"]').textContent())?.trim() ?? '';
-    await anna.page.locator('[data-action="zoom-in"]').click();
-    await anna.page.locator('[data-action="zoom-in"]').click();
+    const zoomIn = async (): Promise<void> => {
+      const previous = await zoomOf(anna.page);
+      await anna.page.locator('[data-action="zoom-in"]').click();
+      await expect.poll(() => zoomOf(anna.page)).not.toBe(previous);
+    };
+    await zoomIn();
+    await zoomIn();
     await expect.poll(() => zoomOf(bartek.page)).toBe(await zoomOf(anna.page));
     const annaNode = await anna.page.locator('[data-node-id="tank"]').boundingBox();
     await expect

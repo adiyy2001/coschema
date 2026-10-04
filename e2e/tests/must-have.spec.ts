@@ -106,7 +106,7 @@ test.describe('must-have behaviours on the production build @must-have', () => {
     await expect(bartek.page.locator('[data-node-id="alarm"]')).toHaveCount(0);
     await expect(anna.page.locator('g[cs-edge]')).toHaveCount(6);
     await expect(bartek.page.locator('g[cs-edge]')).toHaveCount(6);
-    expect(await renderedEdgesAreValid(anna.page)).toBe(true);
+    await expect.poll(() => renderedEdgesAreValid(anna.page)).toBe(true);
     await expect
       .poll(async () => JSON.stringify(await nodePositions(bartek.page)))
       .toBe(JSON.stringify(await nodePositions(anna.page)));
@@ -140,7 +140,7 @@ test.describe('must-have behaviours on the production build @must-have', () => {
     page,
   }) => {
     await openEditor(page);
-    expect(await routeProblems(page)).toEqual([]);
+    await expect.poll(() => routeProblems(page)).toEqual([]);
     const center = await centerOf(node(page, 'alarm'));
     await page.mouse.move(center.x, center.y);
     await page.mouse.down();
