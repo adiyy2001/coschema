@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief asks for an append-only update log in PostgreSQL, periodic compaction into a snapshot, unloading of idle documents and a graceful shutdown that flushes. PostgreSQL 18.6 is the current stable major (released 2026-08-13, per postgresql.org). Version 19 is still in beta.
+The server needs an append-only update log in PostgreSQL, periodic compaction into a snapshot, unloading of idle documents and a graceful shutdown that flushes. PostgreSQL 18.6 is the current stable major (released 2026-08-13, per postgresql.org). Version 19 is still in beta.
 
 ## Decision
 

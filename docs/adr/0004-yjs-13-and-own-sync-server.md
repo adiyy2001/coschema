@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief wants the server to speak y-protocols directly, without Hocuspocus or the `y-websocket` server package, to show that the protocol is understood. The registry shows Yjs 13.6.33 as `latest` (published 2026-09-23). Yjs 14 only exists as a beta tag (`14.0.0-16`). y-protocols is at 1.0.7 and y-indexeddb at 9.0.12, and both peer on `yjs ^13`.
+The server has to speak y-protocols directly, without Hocuspocus or the `y-websocket` server package, to show that the protocol is understood. The registry shows Yjs 13.6.33 as `latest` (published 2026-09-23). Yjs 14 only exists as a beta tag (`14.0.0-16`). y-protocols is at 1.0.7 and y-indexeddb at 9.0.12, and both peer on `yjs ^13`.
 
 ## Decision
 
@@ -15,9 +15,9 @@ The brief wants the server to speak y-protocols directly, without Hocuspocus or 
 
 ## Alternatives
 
-- Hocuspocus or `y-websocket`: faster to wire up, and ruled out by the brief.
+- Hocuspocus or `y-websocket`: faster to wire up, and ruled out because the point is to show the protocol.
 - Yjs 14 beta: not stable, and its peers do not match y-protocols or y-indexeddb yet.
-- Automerge or Loro: both fine CRDTs. Yjs has the mature undo manager and awareness protocol the brief asks for.
+- Automerge or Loro: both fine CRDTs. Yjs has the mature undo manager and awareness protocol this project needs.
 
 ## Consequences
 

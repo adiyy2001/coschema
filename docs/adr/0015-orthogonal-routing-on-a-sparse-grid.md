@@ -24,7 +24,7 @@ Routing is a pure view function. The document stores only user-defined waypoints
 - Uniform grid A*: simple, but memory and time grow with area and the paths hug the grid instead of the obstacles.
 - A visibility graph: shorter paths with diagonals, and orthogonality has to be forced back in.
 - Storing routes in the document: heavy, and every move of a node would rewrite every touching edge.
-- A routing library: the brief says no diagram library, and the algorithm is part of what the project shows.
+- A routing library: no diagram library is allowed here, and the algorithm is part of what the project shows.
 
 ## Consequences
 

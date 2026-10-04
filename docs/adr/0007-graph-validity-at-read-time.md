@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-Two people editing at once can produce documents no single person would have written: an edge pointing at a node someone else just deleted, a connection made to a node that is disappearing, a label edited inside a deleted node. The brief asks me to choose between a derived view that hides the problems and deterministic repair writes, and to avoid repair storms.
+Two people editing at once can produce documents no single person would have written: an edge pointing at a node someone else just deleted, a connection made to a node that is disappearing, a label edited inside a deleted node. I have to choose between a derived view that hides the problems and deterministic repair writes, and to avoid repair storms.
 
 ## Decision
 

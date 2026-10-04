@@ -4,7 +4,7 @@ Status: accepted, 2026-10-04
 
 ## Context
 
-The brief lists nine must-haves and four stretch goals (named version snapshots, comments on nodes, SVG and PNG export, a Quarkus auth service). It also says that when the scope grows, stretch goals go first and tests never do. After milestone 8 every must-have works in the production build and the quality gates are green, so this is the moment to say exactly what is missing.
+The project has nine must-haves and four stretch goals (named version snapshots, comments on nodes, SVG and PNG export, a Quarkus auth service). My rule is that when the scope grows, stretch goals go first and tests never do. Once the editor and the demo page were done every must-have works in the production build and the quality gates are green, so this is the moment to say exactly what is missing.
 
 ## Decision
 
@@ -25,7 +25,7 @@ Also not built, although the data model has room for them:
 
 ## Alternatives
 
-- Build comments or versions and cut something from the tests. Rejected by the brief's own rule.
+- Build comments or versions and cut something from the tests. Rejected: tests are never what gets cut.
 - Hide the gaps. The README has a limitations section instead, and this ADR is its source.
 
 ## Consequences

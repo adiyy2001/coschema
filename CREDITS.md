@@ -1,6 +1,6 @@
 # Credits
 
-coschema is written from scratch. This file lists what it builds on. Everything under `pnpm-lock.yaml` is checked by `pnpm check:licenses`, which fails on any licence outside the list in [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md).
+coschema is written from scratch. This file lists what it builds on. Every package installed on the CI platform (the Linux x64 resolution of `pnpm-lock.yaml`) is checked by `pnpm check:licenses`, which fails on any licence outside the list in [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md).
 
 ## Runtime dependencies
 

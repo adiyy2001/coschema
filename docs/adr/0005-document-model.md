@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief fixes the outline: nodes in a `Y.Map` keyed by id, with position, size, type, style and a label as `Y.Text`; edges in a second `Y.Map` with source, target, ports and waypoints. What it leaves open is how fine-grained each field should be and what a delete does to concurrent edits.
+The outline is fixed: nodes in a `Y.Map` keyed by id, with position, size, type, style and a label as `Y.Text`; edges in a second `Y.Map` with source, target, ports and waypoints. What is left open is how fine-grained each field should be and what a delete does to concurrent edits.
 
 ## Decision
 

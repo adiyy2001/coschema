@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The working rules default to Cypress for end-to-end tests unless the brief says otherwise. The brief says otherwise here. The core end-to-end claims are about two people at once: user A's edit shows up for user B within 200 ms, and edits made offline merge after reconnect.
+My default for end-to-end tests is Cypress. This project is the exception. The core end-to-end claims are about two people at once: user A's edit shows up for user B within 200 ms, and edits made offline merge after reconnect.
 
 Cypress drives one browser instance, and a test runs inside it. It can switch origins with `cy.origin`, but it cannot run two independent sessions side by side in one test.
 

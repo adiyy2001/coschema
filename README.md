@@ -23,8 +23,8 @@ I wanted the hard parts of collaboration: keeping a graph valid when two people 
 1. A graph can become invalid without anyone doing anything wrong. One person connects an edge to a node while another deletes that node. I let the shared document hold the invalid state and hide it in a derived view that never writes, so no client repairs anything and nothing storms ([ADR 0007](docs/adr/0007-graph-validity-at-read-time.md)).
 2. Undo has to mean "undo what I did". Each client has its own undo manager that tracks only local changes, and a drag is one step however many pointer moves it produced. Undoing my move does not revert someone's later label edit, because position and label are separate keys ([ADR 0008](docs/adr/0008-per-user-undo.md)).
 3. Proving convergence. A deterministic simulator runs the real server logic and the real client with 2 to 8 clients over a network that delays, reorders, duplicates and drops messages and cuts clients off, then heals the network and compares every document byte for byte. A failing run prints its seed and replays exactly ([ADR 0012](docs/adr/0012-convergence-simulator.md)).
-4. y-protocols has no acknowledgement, but an offline indicator needs a count of updates that are not safe yet. I added an ack to the wire protocol and count pending updates as the difference between the local sequence and the acknowledged one ([ADR 0009](docs/adr/0009-wire-protocol-and-auth.md)).
-5. 5,000 nodes in SVG at 60 fps. One world transform, a grid index that gives a stable visible window, three levels of detail and a whole-scene overview below zoom 0.25. The benchmark was written first and it failed at 22 fps before the renderer changed ([ADR 0014](docs/adr/0014-svg-rendering-and-culling.md)).
+4. y-protocols has no acknowledgement, but an offline indicator needs a count of updates that are not safe yet. I added an ack to the wire protocol and count pending updates as the difference between the local sequence and the acknowledged one ([ADR 0009](docs/adr/0009-wire-protocol-and-auth.md)). The client also listens to the browser's online and offline events, so the indicator changes at once, and keeps a 10 second acknowledgement watchdog for a connection that is open but dead ([ADR 0027](docs/adr/0027-fail-fast-simulator-saturation-and-network-events.md)).
+5. 5,000 nodes in SVG at 60 fps. One world transform, a grid index that gives a stable visible window, three levels of detail and a whole-scene overview below zoom 0.25. The benchmark was written first, and the first renderer failed it at the zoom that shows the whole scene, so the renderer changed ([ADR 0014](docs/adr/0014-svg-rendering-and-culling.md)).
 
 ## How it works
 
@@ -81,7 +81,7 @@ The pieces with some maths in them:
 
 ## Validation and benchmarks
 
-Every number below is printed by `pnpm report` from the JSON files in `bench/results`, which the scripts in `bench/` and the simulator wrote on one machine. Each file carries the hardware, the Node version, the browser and the git revision it was measured on.
+Every number below is printed by `pnpm report` from the JSON files in `bench/results`, which the scripts in `bench/` and the simulator wrote on one machine. Each file carries the date, the Node version and, where it applies, the hardware and the browser it was measured on.
 
 ```
 CPU: 12th Gen Intel(R) Core(TM) i7-12700H, 20 logical cores, 15.5 GiB RAM
@@ -93,7 +93,7 @@ It is a laptop under WSL2 with other jobs running now and then, and the browser 
 
 ### Convergence simulator
 
-`pnpm sim --seeds 5000` prints `seeds=5,000 failed=0 duration=76.3s` (65.5 seeds per second). Over those seeds the simulated network carried 1,756,564 messages, lost 12,715 of them and duplicated 6,418. CI runs the same 5,000 seeds with a time budget, a 500 run fast-check property, and a run with an injected bug that must fail. The details of the check are in [ADR 0012](docs/adr/0012-convergence-simulator.md).
+`pnpm sim --seeds 5000` (add `--bail` to stop at the first failing seed) prints `seeds=5,000 failed=0 duration=76.3s` (65.5 seeds per second). Over those seeds the simulated network carried 1,756,564 messages, lost 12,715 of them and duplicated 6,418. CI runs the same 5,000 seeds with a time budget, a 500 run fast-check property, and a run with an injected bug that must fail. The details of the check are in [ADR 0012](docs/adr/0012-convergence-simulator.md).
 
 ### Edit to remote render, on localhost
 
@@ -145,6 +145,8 @@ The scenes are generated with random edits including deletes, which is why the l
 
 Lighthouse 13.5.0 scores accessibility 100 on `/`, `/r/test` and `/demo`, on both the desktop and the mobile setting, with no failed audit. A score is not the same as a pleasant experience, and nobody has checked the editor with a real screen reader yet.
 
+The keyboard model differs from the obvious reading of "Tab through nodes". The canvas is one tab stop with roving focus, because 5,000 tab stops would make the page unusable and culling removes most nodes from the DOM anyway. Inside the canvas `N` and `P` move through the nodes in reading order, Alt with an arrow key jumps to the nearest node in that direction, arrow keys move the focused node, Enter edits its label, `C` starts a connection and `?` lists the shortcuts. The toolbar button that adds a node puts it on the nearest free grid cell and the live region says where it went. The reasoning is in [ADR 0016](docs/adr/0016-accessibility-model.md).
+
 ## Run it locally
 
 ```
@@ -177,8 +179,8 @@ The dev server is at <http://127.0.0.1:4217>. The editor in dev mode does not pr
 | `pnpm test:integration` | 40 server tests against real PostgreSQL started in Docker: reconnect with partial state, compaction keeps the document, appends during compaction, bad tokens are rejected, idle unloading, shutdown flush |
 | `pnpm test:sim` and `pnpm sim --seeds 5000` | The fast-check convergence property and the seed loop |
 | `pnpm test:e2e` | 39 Playwright tests on the production build, with several browser contexts: an edit appears for the other user, offline edits merge after reconnect, the keyboard path, the demo page, export. `pnpm test:e2e:postgres` runs them against PostgreSQL |
-| `pnpm test:compose` | `docker compose up --build` from a fresh clone, an edit synced through nginx, `down -v` |
-| `pnpm bench:load`, `bench:latency`, `bench:pan`, `bench:size`, `bench:geometry`, `lighthouse` | The measurements above |
+| `pnpm test:compose` | Clones the committed HEAD into a temporary directory, runs `docker compose up --build` there, syncs an edit through nginx, then `down -v` |
+| `pnpm bench:load`, `bench:saturation`, `bench:latency`, `bench:pan`, `bench:size`, `bench:geometry`, `lighthouse` | The measurements above |
 | `pnpm verify` | Lint, typecheck, licences, coverage, integration, simulator and build in one go |
 
 The end to end suite uses Playwright because Cypress cannot drive two browsers in one test ([ADR 0013](docs/adr/0013-playwright-for-e2e.md)). CI (`.github/workflows/ci.yml`) has jobs for verification, integration, the simulator, e2e, accessibility, compose and a lint of the workflow file itself. The workflow has not run on GitHub yet and `act` was not available, so I ran each job's commands locally one by one.
@@ -195,12 +197,12 @@ The decisions that matter most:
 - Wire protocol, first-message JWT and acknowledgements ([0009](docs/adr/0009-wire-protocol-and-auth.md)).
 - An append-only update log in PostgreSQL with compaction ([0010](docs/adr/0010-persistence-update-log-and-snapshots.md)).
 - One room hub that runs in the server, the simulator and the demo page ([0011](docs/adr/0011-transport-abstraction-and-in-browser-hub.md)).
-- The convergence simulator ([0012](docs/adr/0012-convergence-simulator.md)).
+- The convergence simulator ([0012](docs/adr/0012-convergence-simulator.md)), and how it fails fast ([0027](docs/adr/0027-fail-fast-simulator-saturation-and-network-events.md)).
 - SVG rendering with grid culling and levels of detail ([0014](docs/adr/0014-svg-rendering-and-culling.md)).
 - Orthogonal routing with A* on a sparse grid ([0015](docs/adr/0015-orthogonal-routing-on-a-sparse-grid.md)).
 - Accessibility model and the demo page ([0016](docs/adr/0016-accessibility-model.md), [0023](docs/adr/0023-accessibility-and-demo-page.md)).
 
-All 26 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) lists what I cut.
+All 27 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) lists what I cut.
 
 ## Limitations and what I would do next
 
@@ -208,6 +210,7 @@ All 26 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playw
 - Compaction shrinks the log by about 1.5 to 1.7 times, not more, because a Yjs document keeps tombstones. Real garbage collection of old history is a different feature.
 - Hidden edges, the ones whose endpoint was deleted, stay in the document until the node comes back or someone deletes them. A server-side sweep would be a separate decision.
 - Z-order keys can grow when people keep inserting into the same shrinking gap. A thousand alternating inserts stay under 600 characters, and there is no rebalancing, because that would need a coordinated write.
+- A drag is previewed locally and committed on pointer release, so other people see a node jump when you let go, not while you drag. Streaming throttled moves during a drag would make it feel live, and it is the first thing I would add ([ADR 0014](docs/adr/0014-svg-rendering-and-culling.md), [ADR 0021](docs/adr/0021-editor-interactions-as-a-pure-state-machine.md)).
 - The editor has no resize handles and no waypoint dragging. The data model and the simulator already cover both.
 - Version snapshots, comments on nodes and the Quarkus auth service are not built. The JWT check uses a dev key.
 - The end to end suite and every browser number come from Chromium. Firefox and WebKit are untested, and so is a real screen reader.

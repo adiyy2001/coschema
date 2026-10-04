@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The working rules say Jest unless the Angular CLI default is clearly the better fit. In Angular 22 the generated project uses `@angular/build:unit-test` with Vitest and jsdom, and Karma is no longer the default. Jest 30 with `jest-preset-angular` 17 still works, but it needs an ESM transform setup.
+My default is Jest unless the Angular CLI default is clearly the better fit. In Angular 22 the generated project uses `@angular/build:unit-test` with Vitest and jsdom, and Karma is no longer the default. Jest 30 with `jest-preset-angular` 17 still works, but it needs an ESM transform setup.
 
 Yjs matters here: loading it once as ESM and once as CommonJS in the same process makes it warn and breaks its `instanceof` checks. Jest's module system makes that easy to hit when workspace packages and node modules mix formats.
 

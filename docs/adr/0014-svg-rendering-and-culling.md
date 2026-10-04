@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief requires an own SVG renderer, no diagram library, and 60 fps panning with 5,000 nodes. The SVG DOM gets slow at a few thousand elements with layout and style work, so the number of elements in the DOM has to stay small, and panning must not touch most of them.
+The editor needs its own SVG renderer, no diagram library, and 60 fps panning with 5,000 nodes. The SVG DOM gets slow at a few thousand elements with layout and style work, so the number of elements in the DOM has to stay small, and panning must not touch most of them.
 
 ## Decision
 
@@ -14,11 +14,11 @@ The brief requires an own SVG renderer, no diagram library, and 60 fps panning w
 - Edges are culled with their routed bounding box, and routing is cached (ADR 0015).
 - Three levels of detail by zoom. From 0.7 up everything is drawn with labels (`full`). From 0.25 to 0.7 nodes and edges are drawn without labels (`simple`). Below 0.25 the scene is two `<path>` elements, one with every node rectangle and one with a straight line per edge, plus a third path for the selection (`minimal`). Routes are computed only for edges that are in the window and not in the minimal level.
 - The Yjs document feeds the UI through an incremental graph store: an observer collects the node and edge ids that changed in a transaction, and the store recomputes only those. Updates are batched to one per animation frame.
-- The first deliverable of the editor milestone is a 5,000 node benchmark page. If panning in headless Chrome does not hold 60 fps there, the renderer changes before any interaction code is written.
+- The first thing built for the editor is a 5,000 node benchmark page. If panning in headless Chrome does not hold 60 fps there, the renderer changes before any interaction code is written.
 
 ## Alternatives
 
-- Canvas or WebGL: faster at scale, but the brief asks for SVG and SVG is accessible by construction (focusable elements, ARIA).
+- Canvas or WebGL: faster at scale, but SVG is accessible by construction (focusable elements, ARIA).
 - `content-visibility` and CSS containment alone: helps layout, does not cut the number of Angular views.
 - A virtual scroll component: designed for lists, not a 2D plane.
 
@@ -34,7 +34,7 @@ The gate ran first, on the 5,000 node scene (`/bench`, seeded, about 7,000 edges
 
 What the gate found on the way, in order:
 
-- The first version drew every visible node and edge as components at every zoom. Zoom 1 and 0.35 held 60 fps, but at zoom 0.1 (the whole scene in view) it was 22 fps: the window holds thousands of components, and any window change rebuilds them. Fix: the `minimal` level above, which makes the whole scene a constant number of elements (11 SVG elements at 0.1). A first version of it only drew the nodes in the cell window, and at zoom 0.05 the window changed every few frames, so the path strings were rebuilt while panning (55 fps median). The overview paths now cover the whole document and depend on the graph revision only, so panning is one transform change.
+- The first version drew every visible node and edge as components at every zoom. Zoom 1 and 0.35 held 60 fps, but at zoom 0.1 (the whole scene in view) it dropped well below 60 fps (a development run whose result file was not kept, so the figure is not quoted here): the window holds thousands of components, and any window change rebuilds them. Fix: the `minimal` level above, which makes the whole scene a constant number of elements (11 SVG elements at 0.1). A first version of it only drew the nodes in the cell window, and at zoom 0.05 the window changed every few frames, so the path strings were rebuilt while panning (55 fps median). The overview paths now cover the whole document and depend on the graph revision only, so panning is one transform change.
 - Labels are the expensive part of the `full` level. At zoom 0.5 with labels the median was 35.6 fps with about 300 nodes in the DOM, at the same zoom without labels 60 fps. A label at 0.5 is 7 px tall, so the `full` level starts at 0.7.
 - At zoom 0.2 about 1,200 nodes and 1,900 edges are in the DOM and one run had a 47 fps minimum and a 136 ms task, so the `minimal` level starts at 0.25. The bench covers 1, 0.75, 0.5, 0.35, 0.25, 0.2, 0.1 and 0.05.
 - One bench run of the same build had a median of 52.9 fps at zoom 1 while other processes loaded the machine (load average about 7.8 on 20 logical cores). The next run on the same build, with a load average of about 3, had 60 fps. Numbers from a loaded machine are not kept in `pan.json`. The same happened again on 2026-10-04 while other builds ran (load average 7.6): zoom 0.25 had a median of 56.8 fps and a worst run of 31.6 fps. A rerun at a load average of about 3 gave 60 fps at every zoom, and that run is the one in `pan.json`.

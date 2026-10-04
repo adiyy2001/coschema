@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03. The details that were open are settled in ADR 0023
 
 ## Context
 
-The brief asks for keyboard operation of the whole canvas and a polite live region that announces remote changes without flooding a screen reader. The target is WCAG 2.1 AA and a Lighthouse accessibility score of 95 or more. Collaborative canvases rarely meet either.
+The whole canvas has to be keyboard operable and a polite live region that announces remote changes without flooding a screen reader. The target is WCAG 2.1 AA and a Lighthouse accessibility score of 95 or more. Collaborative canvases rarely meet either.
 
 ## Decision
 
@@ -30,5 +30,5 @@ Not colour alone: remote cursors and selections carry the person's name and a di
 
 ## Consequences
 
-- The element roles (`application` on the canvas versus `group` and `img` with names) and the exact accessible names are tuned with Lighthouse and Playwright's ARIA snapshots in the accessibility milestone, and any change gets recorded here.
+- The element roles (`application` on the canvas versus `group` and `img` with names) and the exact accessible names are tuned with Lighthouse and Playwright's ARIA snapshots during the accessibility work, and any change gets recorded here.
 - Keyboard-only paths are covered by Playwright tests, not only by unit tests.

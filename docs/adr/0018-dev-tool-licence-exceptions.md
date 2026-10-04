@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief allows only permissive dependencies (MIT, Apache 2.0, BSD, ISC). `scripts/licenses.ts` enforces that over everything pnpm installed. Vite 8, which Vitest 5 and the Angular 22 build tooling run on, depends on `lightningcss`, and it is licensed MPL-2.0. MPL-2.0 is a file-level copyleft licence.
+Only permissive dependencies are allowed (MIT, Apache 2.0, BSD, ISC). `scripts/licenses.ts` enforces that over everything pnpm installed. Vite 8, which Vitest 5 and the Angular 22 build tooling run on, depends on `lightningcss`, and it is licensed MPL-2.0. MPL-2.0 is a file-level copyleft licence.
 
 ## Decision
 
@@ -24,4 +24,4 @@ The justification is narrow: it is a build-time dev tool pulled in by Vite, it i
 ## Consequences
 
 - Any new exception is a new line in the script and a new entry here.
-- Lighthouse stays out of `package.json` for the reason in the plan: it is avoidable, so it is run through `pnpm dlx`.
+- Lighthouse stays out of `package.json` for a simple reason: it is avoidable, so it is run through `pnpm dlx`.

@@ -4,7 +4,7 @@ Status: accepted, 2026-10-03
 
 ## Context
 
-The brief asks for the latest stable version of every tool. On the npm registry the `latest` tag of `typescript` is 7.0.2. Angular 22.2.1 declares `"typescript": ">=6.0 <6.1"` as a peer of both `@angular/build` and `@angular/compiler-cli`, and typescript-eslint 8.71.0 declares `<6.1.0`. Angular also declares `node: ^22.22.3 || ^24.15.0 || >=26.0.0`, and the CLI refuses to run on older Node. The machine had Node 24.13.0.
+I want the latest stable version of every tool. On the npm registry the `latest` tag of `typescript` is 7.0.2. Angular 22.2.1 declares `"typescript": ">=6.0 <6.1"` as a peer of both `@angular/build` and `@angular/compiler-cli`, and typescript-eslint 8.71.0 declares `<6.1.0`. Angular also declares `node: ^22.22.3 || ^24.15.0 || >=26.0.0`, and the CLI refuses to run on older Node. The machine had Node 24.13.0.
 
 ## Decision
 
@@ -21,4 +21,4 @@ The brief asks for the latest stable version of every tool. On the npm registry 
 ## Consequences
 
 - When Angular widens its TypeScript range, bump TypeScript in one commit.
-- Every agent and CI job must use Node 24.15 or newer. CI reads `.nvmrc`.
+- Every contributor and every CI job must use Node 24.15 or newer. CI reads `.nvmrc`.

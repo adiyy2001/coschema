@@ -105,7 +105,7 @@ function baseWithEdge(): { ids: NodeId[]; edge: string } & {
   };
 }
 
-describe('brief case 1: an edge whose endpoint was deleted concurrently', () => {
+describe('case 1: an edge whose endpoint was deleted concurrently', () => {
   it('drops the edge when one side deletes the endpoint and the other reroutes the edge', () => {
     const base = baseWithEdge();
     const fork = startFromBase(base.prepare);
@@ -166,7 +166,7 @@ describe('brief case 1: an edge whose endpoint was deleted concurrently', () => 
   });
 });
 
-describe('brief case 2: a node moved by two people', () => {
+describe('case 2: a node moved by two people', () => {
   it('ends with exactly one of the two positions on every replica, never a mix', () => {
     const base = baseWithEdge();
     const fork = startFromBase(base.prepare);
@@ -201,7 +201,7 @@ describe('brief case 2: a node moved by two people', () => {
   });
 });
 
-describe('brief case 3: a label edited while its node is deleted', () => {
+describe('case 3: a label edited while its node is deleted', () => {
   it('removes the node and drops the edit on every replica', () => {
     const fork = startFromBase((client) => {
       createNode(client.context, { id: 'x', type: 'rect', pos: [0, 0], label: 'Pump 3' });
@@ -218,7 +218,7 @@ describe('brief case 3: a label edited while its node is deleted', () => {
   });
 });
 
-describe('brief case 4: a connection made to a node someone else is deleting', () => {
+describe('case 4: a connection made to a node someone else is deleting', () => {
   it('keeps the edge in the document and hides it in the derived graph', () => {
     const fork = startFromBase((client) => {
       createNode(client.context, { id: 'x', type: 'rect', pos: [0, 0] });

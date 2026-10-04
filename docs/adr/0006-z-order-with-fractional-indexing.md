@@ -6,7 +6,7 @@ Status: accepted, 2026-10-03
 
 Z-order has to survive concurrent reordering. Storing an array index per node does not work: two people sending "bring to front" would write the same integer. Storing the order in a `Y.Array` would mean moving elements, and Yjs has no native move.
 
-The brief asks for my own fractional indexing module, tested, with a random suffix so concurrent inserts into the same gap do not collide. The `fractional-indexing` package (4.0.0, CC0) is a reference for the idea. I use it for nothing else and write the code from scratch.
+I write my own fractional indexing module, tested, with a random suffix so concurrent inserts into the same gap do not collide. The `fractional-indexing` package (4.0.0, CC0) is a reference for the idea. I use it for nothing else and write the code from scratch.
 
 ## Decision
 
@@ -25,7 +25,7 @@ The brief asks for my own fractional indexing module, tested, with a random suff
 
 - Integer ranks with renumbering: renumbering is a repair write and storms under concurrency.
 - LSEQ or a CRDT list: heavier, and z-order does not need interleaving semantics.
-- The npm package: fewer lines for me to write, but the brief asks for the module and its tests.
+- The npm package: fewer lines for me to write, but writing the module and its tests is part of what the project shows.
 
 ## Consequences
 
