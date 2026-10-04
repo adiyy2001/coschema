@@ -82,10 +82,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: SIM_RUNS=500 pnpm test:sim
-      - run: pnpm sim --seeds 5000 --budget 480
+      - run: pnpm sim --seeds 5000 --budget 480 --bail
       - name: The simulator must catch an injected bug
         run: |
-          if pnpm sim --seeds 30 --inject lose-log --out bench/results/tmp/injected.json; then
+          if pnpm sim --seeds 20 --bail --inject lose-log --out bench/results/tmp/injected.json; then
             echo "the simulator passed with a bug injected"
             exit 1
           fi

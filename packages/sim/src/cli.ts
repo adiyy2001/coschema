@@ -8,6 +8,7 @@ import {
   formatSingleRun,
   formatSummary,
   type SeedFailure,
+  type StopReason,
   type SimReport,
 } from './report';
 import { runScenario, type RunStats } from './run-scenario';
@@ -28,7 +29,7 @@ const MAX_PRINTED_FAILURES = 10;
 const PROGRESS_EVERY = 1000;
 
 const USAGE = [
-  'usage: pnpm sim --seeds <count> [--from <seed>] [--out <file>] [--budget <seconds>]',
+  'usage: pnpm sim --seeds <count> [--from <seed>] [--out <file>] [--budget <seconds>] [--bail]',
   '       pnpm sim --seed <seed> [--verbose]',
   '       add --inject lose-log or --inject zombie to prove the simulator catches a bug',
 ].join('\n');
@@ -41,6 +42,7 @@ interface Options {
   readonly out: string;
   readonly budgetSeconds: number | undefined;
   readonly storm: boolean;
+  readonly bail: boolean;
   readonly faults: Faults;
 }
 
@@ -77,6 +79,7 @@ function parseOptions(argv: readonly string[]): Options {
       out: { type: 'string' },
       budget: { type: 'string' },
       'no-storm': { type: 'boolean', default: false },
+      bail: { type: 'boolean', default: false },
       inject: { type: 'string' },
     },
     strict: true,
@@ -89,6 +92,7 @@ function parseOptions(argv: readonly string[]): Options {
     out: values.out ?? DEFAULT_RESULTS_PATH,
     budgetSeconds: parseCount('--budget', values.budget),
     storm: !values['no-storm'],
+    bail: values.bail,
     faults: parseFaults(values.inject),
   };
 }
@@ -103,54 +107,71 @@ function runSingle(options: Options, seed: number, io: CliIo): number {
   return result.ok ? 0 : 1;
 }
 
-function withinBudget(options: Options, durationMs: number, io: CliIo): boolean {
-  if (options.budgetSeconds === undefined || durationMs <= options.budgetSeconds * 1000)
-    return true;
-  io.err(
-    `over budget: ${formatDuration(durationMs)} is more than the ${options.budgetSeconds}s allowed`,
-  );
-  return false;
-}
-
 function runMany(options: Options, count: number, io: CliIo): number {
   const started = io.now();
+  const deadline =
+    options.budgetSeconds === undefined ? undefined : started + options.budgetSeconds * 1000;
   const failedSeeds: SeedFailure[] = [];
   let totals: RunStats = EMPTY_STATS;
   let virtualMs = 0;
-  for (let offset = 0; offset < count; offset += 1) {
-    const seed = options.from + offset;
+  let completed = 0;
+  let stoppedEarly: StopReason | undefined;
+  while (completed < count && stoppedEarly === undefined) {
+    const seed = options.from + completed;
     const result = runScenario(scenarioFromSeed(seed), {
       undoStorm: options.storm,
       faults: options.faults,
     });
+    completed += 1;
     totals = addStats(totals, result.stats);
     virtualMs += result.virtualMs;
-    if (!result.ok) failedSeeds.push({ seed, failures: result.failures });
-    if ((offset + 1) % PROGRESS_EVERY === 0 && offset + 1 < count) {
-      io.err(`${offset + 1}/${count} seeds, ${failedSeeds.length} failed`);
+    if (!result.ok) {
+      const failure = { seed, failures: result.failures };
+      failedSeeds.push(failure);
+      if (failedSeeds.length <= MAX_PRINTED_FAILURES) io.out(formatFailure(failure));
+      if (options.bail) stoppedEarly = 'bail';
+    }
+    if (completed % PROGRESS_EVERY === 0 && completed < count) {
+      io.err(`${completed}/${count} seeds, ${failedSeeds.length} failed`);
+    }
+    if (stoppedEarly === undefined && completed < count && deadline !== undefined) {
+      if (io.now() > deadline) stoppedEarly = 'budget';
     }
   }
   const durationMs = io.now() - started;
   const report: SimReport = {
-    seeds: count,
+    seeds: completed,
+    requested: count,
+    stoppedEarly,
     from: options.from,
     failed: failedSeeds.length,
     failedSeeds,
     durationMs: Math.round(durationMs),
-    seedsPerSecond: durationMs > 0 ? Math.round((count / durationMs) * 1000 * 10) / 10 : 0,
+    seedsPerSecond: durationMs > 0 ? Math.round((completed / durationMs) * 1000 * 10) / 10 : 0,
     totals,
     virtualMs: Math.round(virtualMs),
     generatedAt: io.isoNow(),
     node: io.nodeVersion,
   };
-  for (const failure of failedSeeds.slice(0, MAX_PRINTED_FAILURES)) io.out(formatFailure(failure));
   if (failedSeeds.length > MAX_PRINTED_FAILURES) {
     io.out(`... and ${failedSeeds.length - MAX_PRINTED_FAILURES} more failing seeds`);
   }
   io.out(formatSummary(report));
   io.writeJson(options.out, report);
   if (failedSeeds.length > 0) return 1;
-  return withinBudget(options, durationMs, io) ? 0 : OVER_BUDGET_EXIT_CODE;
+  if (stoppedEarly === 'budget') {
+    io.err(
+      `over budget: stopped after ${completed} of ${count} seeds, the ${options.budgetSeconds}s allowed ran out`,
+    );
+    return OVER_BUDGET_EXIT_CODE;
+  }
+  if (deadline !== undefined && io.now() > deadline) {
+    io.err(
+      `over budget: ${formatDuration(durationMs)} is more than the ${options.budgetSeconds}s allowed`,
+    );
+    return OVER_BUDGET_EXIT_CODE;
+  }
+  return 0;
 }
 
 export function runCli(argv: readonly string[], io: CliIo): number {

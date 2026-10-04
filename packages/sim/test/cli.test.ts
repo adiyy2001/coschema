@@ -64,8 +64,47 @@ describe('sim CLI', () => {
     expect(within.err).toEqual([]);
     const over = harness();
     expect(runCli(['--seeds', '3', '--budget', '1'], over.io)).toBe(3);
-    expect(over.err).toEqual(['over budget: 2.0s is more than the 1s allowed']);
-    expect(over.written).toHaveLength(1);
+    expect(over.err).toEqual(['over budget: stopped after 1 of 3 seeds, the 1s allowed ran out']);
+    expect(over.out).toEqual(['seeds=1 failed=0 duration=4.0s requested=3 stopped=budget']);
+    expect((over.written[0]?.value as SimReport).stoppedEarly).toBe('budget');
+  });
+
+  it('fails a run whose last seed ends past the budget', () => {
+    const { io, err } = harness();
+    expect(runCli(['--seeds', '1', '--budget', '1'], io)).toBe(3);
+    expect(err).toEqual(['over budget: 2.0s is more than the 1s allowed']);
+  });
+
+  it('prints each failing seed while the run is still going', () => {
+    const { io, out } = harness();
+    let seedsRunWhenFirstFailurePrinted = 0;
+    const original = io.out;
+    let lines = 0;
+    const watching: CliIo = {
+      ...io,
+      out: (line) => {
+        original(line);
+        lines += 1;
+        if (line.startsWith('FAILED seed=') && seedsRunWhenFirstFailurePrinted === 0) {
+          seedsRunWhenFirstFailurePrinted = lines;
+        }
+      },
+    };
+    runCli(['--seeds', '15', '--inject', 'lose-log'], watching);
+    expect(seedsRunWhenFirstFailurePrinted).toBe(1);
+    expect(out[out.length - 1]).toMatch(/^seeds=15 failed=/);
+  });
+
+  it('stops at the first failing seed with --bail and reports how far it got', () => {
+    const { io, out, written } = harness();
+    expect(runCli(['--seeds', '500', '--inject', 'lose-log', '--bail'], io)).toBe(1);
+    expect(out.filter((line) => line.startsWith('FAILED seed='))).toHaveLength(1);
+    const report = written[0]?.value as SimReport;
+    expect(report.stoppedEarly).toBe('bail');
+    expect(report.requested).toBe(500);
+    expect(report.seeds).toBeLessThan(500);
+    expect(report.failed).toBe(1);
+    expect(out[out.length - 1]).toContain('stopped=bail');
   });
 
   it('prints the trace hash for one seed and the same one on a second run', () => {
@@ -135,6 +174,8 @@ describe('sim report formatting', () => {
     expect(formatDuration(79_123)).toBe('79.1s');
     const report: SimReport = {
       seeds: 5000,
+      requested: 5000,
+      stoppedEarly: undefined,
       from: 1,
       failed: 0,
       failedSeeds: [],

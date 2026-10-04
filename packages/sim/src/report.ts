@@ -5,8 +5,12 @@ export interface SeedFailure {
   readonly failures: readonly RunFailure[];
 }
 
+export type StopReason = 'bail' | 'budget';
+
 export interface SimReport {
   readonly seeds: number;
+  readonly requested: number;
+  readonly stoppedEarly: StopReason | undefined;
   readonly from: number;
   readonly failed: number;
   readonly failedSeeds: readonly SeedFailure[];
@@ -45,7 +49,9 @@ export function formatDuration(durationMs: number): string {
 }
 
 export function formatSummary(report: SimReport): string {
-  return `seeds=${report.seeds} failed=${report.failed} duration=${formatDuration(report.durationMs)}`;
+  const line = `seeds=${report.seeds} failed=${report.failed} duration=${formatDuration(report.durationMs)}`;
+  if (report.stoppedEarly === undefined) return line;
+  return `${line} requested=${report.requested} stopped=${report.stoppedEarly}`;
 }
 
 export function formatFailure(failure: SeedFailure): string {
