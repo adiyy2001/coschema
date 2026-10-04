@@ -20,7 +20,7 @@ const TEXT_EXTENSIONS = new Set([
   '.txt',
   '',
 ]);
-const SKIPPED_FILES = new Set(['pnpm-lock.yaml', 'BRIEF.md', 'NOTES_FOR_ADRIAN.md']);
+const SKIPPED_FILES = new Set(['pnpm-lock.yaml', 'BRIEF.md', 'NOTES_FOR_ADRIAN.md', 'PLAN.md']);
 
 function main(): void {
   const problems: string[] = [];

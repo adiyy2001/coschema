@@ -8,3 +8,6 @@ playwright-report
 *.log
 .env
 .env.*
+PLAN.md
+BRIEF.md
+NOTES_FOR_ADRIAN.md
