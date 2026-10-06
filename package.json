@@ -25,13 +25,15 @@
     "bench:geometry": "tsx bench/geometry/main.ts",
     "bench:size": "tsx bench/size/main.ts",
     "build": "pnpm -r --if-present build",
+    "build:pages": "pnpm --filter @coschema/editor build --configuration production,pages && tsx scripts/pages-site.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm check:licenses && pnpm test:coverage && pnpm test:integration && pnpm test:sim && pnpm build",
     "bench:latency": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/latency/main.ts",
     "lighthouse": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx bench/lighthouse/main.ts",
     "bench:pan": "pnpm --filter @coschema/editor build && tsx bench/pan/main.ts",
     "test:compose": "tsx bench/compose/smoke.ts",
     "test:e2e:postgres": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && tsx scripts/e2e-postgres.ts",
-    "test:e2e": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && pnpm --filter @coschema/e2e exec playwright test"
+    "test:e2e": "pnpm --filter @coschema/server build && pnpm --filter @coschema/editor build && pnpm --filter @coschema/e2e exec playwright test",
+    "test:e2e:pages": "pnpm build:pages && pnpm --filter @coschema/e2e exec playwright test --config playwright.pages.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

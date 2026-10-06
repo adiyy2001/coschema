@@ -130,7 +130,7 @@ const PROFILE_LABELS: Readonly<Record<LinkProfileName, string>> = {
           {{ world.messing() ? 'Making a mess' : 'Make a mess' }}
         </button>
         <button type="button" data-action="reset" (click)="world.reset()">Reset</button>
-        <a class="link" href="/">Solo editor</a>
+        <a class="link" href="solo">Solo editor</a>
       </div>
       <div class="panes">
         @for (pane of world.panes(); track pane.key) {

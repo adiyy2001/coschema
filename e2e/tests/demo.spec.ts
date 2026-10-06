@@ -1,54 +1,9 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
-
-function pane(page: Page, name: string): Locator {
-  return page.locator(`[data-pane="${name}"]`);
-}
+import { expect, test, type Page } from '@playwright/test';
+import { dragIn, expectDemoReady, pane, positionsIn, setRange } from '../support/demo';
 
 async function openDemo(page: Page, query = ''): Promise<void> {
   await page.goto(`/demo${query}`);
-  await expect(page.locator('[data-pane]')).toHaveCount(query.includes('panes=3') ? 3 : 2);
-  for (const name of ['Ada', 'Bruno']) {
-    await expect(pane(page, name).locator('[data-connection][data-state="online"]')).toBeVisible();
-    await expect(pane(page, name).locator('[data-node-id]')).toHaveCount(7);
-  }
-}
-
-async function setRange(input: Locator, value: number): Promise<void> {
-  await input.evaluate((element, next) => {
-    if (!(element instanceof HTMLInputElement)) throw new Error('not an input');
-    element.value = String(next);
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-  }, value);
-}
-
-async function positionsIn(scope: Locator): Promise<Record<string, string>> {
-  return scope.evaluate((root) => {
-    const entries: [string, string][] = [];
-    for (const element of root.querySelectorAll('[data-node-id]')) {
-      const id = element.getAttribute('data-node-id') ?? '';
-      const label = element.querySelector('text.label')?.textContent.trim() ?? '';
-      entries.push([id, `${element.getAttribute('transform') ?? ''}|${label}`]);
-    }
-    return Object.fromEntries(entries.sort(([left], [right]) => left.localeCompare(right)));
-  });
-}
-
-async function dragIn(
-  page: Page,
-  scope: Locator,
-  id: string,
-  dx: number,
-  dy: number,
-): Promise<void> {
-  const target = scope.locator(`[data-node-id="${id}"]`);
-  const box = await target.boundingBox();
-  if (box === null) throw new Error('node has no box');
-  const from = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
-  await page.mouse.move(from.x, from.y);
-  await page.mouse.down();
-  await page.mouse.move(from.x + dx / 2, from.y + dy / 2, { steps: 6 });
-  await page.mouse.move(from.x + dx, from.y + dy, { steps: 6 });
-  await page.mouse.up();
+  await expectDemoReady(page, query.includes('panes=3') ? 3 : 2);
 }
 
 test.describe('demo page @demo', () => {

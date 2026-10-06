@@ -1,6 +1,7 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer, type Server } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
+import { resolvePagesFile } from './pages-site';
 
 const CONTENT_TYPES: Readonly<Record<string, string>> = {
   '.html': 'text/html; charset=utf-8',
@@ -28,23 +29,54 @@ function resolveRequestPath(root: string, urlPath: string): string | undefined {
   return extname(decoded) === '' && existsSync(fallback) ? fallback : undefined;
 }
 
+interface ResolvedFile {
+  readonly file: string;
+  readonly status: number;
+}
+
+type FileResolver = (urlPath: string) => ResolvedFile | undefined;
+
 export async function startStaticServer(
   root: string,
   port: number,
   host = '127.0.0.1',
 ): Promise<StaticServer> {
   const base = resolve(root);
+  return serveFiles(
+    (urlPath) => {
+      const file = resolveRequestPath(base, urlPath);
+      return file === undefined ? undefined : { file, status: 200 };
+    },
+    port,
+    host,
+  );
+}
+
+export async function startPagesServer(
+  root: string,
+  port: number,
+  host = '127.0.0.1',
+): Promise<StaticServer> {
+  const base = resolve(root);
+  return serveFiles((urlPath) => resolvePagesFile(base, urlPath), port, host);
+}
+
+async function serveFiles(
+  resolveFile: FileResolver,
+  port: number,
+  host: string,
+): Promise<StaticServer> {
   const server: Server = createServer((request, response) => {
-    const file = resolveRequestPath(base, request.url ?? '/');
-    if (file === undefined) {
+    const resolved = resolveFile(request.url ?? '/');
+    if (resolved === undefined) {
       response.writeHead(404).end('not found');
       return;
     }
-    response.writeHead(200, {
-      'content-type': CONTENT_TYPES[extname(file)] ?? 'application/octet-stream',
+    response.writeHead(resolved.status, {
+      'content-type': CONTENT_TYPES[extname(resolved.file)] ?? 'application/octet-stream',
       'cache-control': 'no-store',
     });
-    createReadStream(file).pipe(response);
+    createReadStream(resolved.file).pipe(response);
   });
   await new Promise<void>((resolveListening, rejectListening) => {
     server.once('error', rejectListening);

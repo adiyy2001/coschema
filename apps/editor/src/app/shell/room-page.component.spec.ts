@@ -414,7 +414,7 @@ describe('RoomPageComponent', () => {
     buttonFor(room.root, '[data-action="join-submit"]').click();
     await settle(room.fixture);
     expect(room.injected(Collaboration).identity().name).toBe('Ola');
-    expect(room.opened).toEqual(['/r/Boiler-House-2?server=http://127.0.0.1:4318']);
+    expect(room.opened).toEqual(['r/Boiler-House-2?server=http://127.0.0.1:4318']);
     expect(dialog?.hasAttribute('open')).toBe(false);
     room.restore();
   });

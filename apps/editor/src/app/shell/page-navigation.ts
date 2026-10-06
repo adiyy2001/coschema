@@ -18,5 +18,5 @@ export const PAGE_NAVIGATION = new InjectionToken<PageNavigation>('PAGE_NAVIGATI
 });
 
 export function roomPath(room: string, search: string): string {
-  return `/r/${encodeURIComponent(room)}${search}`;
+  return `r/${encodeURIComponent(room)}${search}`;
 }

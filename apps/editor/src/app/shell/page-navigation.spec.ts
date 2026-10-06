@@ -10,9 +10,9 @@ afterEach(() => {
 describe('roomPath', () => {
   it('encodes the room and keeps the query string', () => {
     expect(roomPath('plant 1/a', '?server=http://127.0.0.1:4218')).toBe(
-      '/r/plant%201%2Fa?server=http://127.0.0.1:4218',
+      'r/plant%201%2Fa?server=http://127.0.0.1:4218',
     );
-    expect(roomPath('plant', '')).toBe('/r/plant');
+    expect(roomPath('plant', '')).toBe('r/plant');
   });
 });
 

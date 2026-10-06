@@ -43,6 +43,16 @@
               ],
               "outputHashing": "all"
             },
+            "pages": {
+              "outputPath": "dist/pages",
+              "baseHref": "/coschema/",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/start-page.ts",
+                  "with": "src/app/start-page.pages.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -76,7 +86,8 @@
               "src/app/testing/**",
               "src/app/app.ts",
               "src/app/app.config.ts",
-              "src/app/app.routes.ts"
+              "src/app/app.routes.ts",
+              "src/app/start-page*.ts"
             ],
             "coverageReporters": ["text-summary", "json-summary", "lcov"]
           }
