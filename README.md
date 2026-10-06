@@ -4,7 +4,7 @@ A real-time collaborative diagram editor with live cursors, offline editing, per
 
 ![Two editors side by side: one goes offline, both edit, the link comes back and the copies merge. Then live cursors and follow mode.](docs/media/demo.gif)
 
-Live demo: <https://adiyy2001.github.io/coschema/>. It opens the `/demo` page, and the room runs inside your browser, so nothing is sent to a server.
+Live demo: <https://coschema.adrianturbinski.pl/>. It opens the `/demo` page, and the room runs inside your browser, so nothing is sent to a server.
 
 [![CI](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml/badge.svg)](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml)
 ![Coverage of lines, packages, server and editor together](docs/media/coverage.svg)
@@ -184,12 +184,12 @@ The dev server is at <http://127.0.0.1:4217>. The editor in dev mode does not pr
 | `pnpm lint` | ESLint with strict type-checked rules, Prettier, a no-comments check and a no-dashes check, a check that only one Yjs is installed |
 | `pnpm typecheck` | `tsc` for every package, `ngc` with template checking for the editor |
 | `pnpm check:licenses` | Fails on any dependency outside MIT, Apache-2.0, BSD, ISC and 0BSD, with the named exceptions of [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md) |
-| `pnpm test` | 660 unit tests in the packages, the server and the scripts, and 351 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
+| `pnpm test` | 661 unit tests in the packages, the server and the scripts, and 351 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
 | `pnpm test:coverage` | The same with thresholds: 90% of lines for core logic, 80% for the rest. Lines covered: 98.75% in the packages and the server, 96.85% in the editor |
 | `pnpm test:integration` | 40 server tests against real PostgreSQL started in Docker: reconnect with partial state, compaction keeps the document, appends during compaction, bad tokens are rejected, idle unloading, shutdown flush |
 | `pnpm test:sim` and `pnpm sim --seeds 5000` | The fast-check convergence property and the seed loop |
 | `pnpm test:e2e` | 41 Playwright tests on the production build, with several browser contexts: an edit appears for the other user, offline edits merge after reconnect, the keyboard path, the demo page, export. `pnpm test:e2e:postgres` runs them against PostgreSQL |
-| `pnpm test:e2e:pages` | Builds the GitHub Pages version under `/coschema/` and serves it the way Pages does. 4 Playwright tests: the root opens the demo, two editors sync with no WebSocket and no request outside the site, deep links and the solo editor link work |
+| `pnpm test:e2e:pages` | Builds the GitHub Pages version for the domain root and serves it the way Pages does. 4 Playwright tests: the root opens the demo, two editors sync with no WebSocket and no request outside the site, deep links and the solo editor link work |
 | `pnpm test:compose` | Clones the committed HEAD into a temporary directory, runs `docker compose up --build` there, syncs an edit through nginx, then `down -v` |
 | `pnpm bench:load`, `bench:saturation`, `bench:latency`, `bench:pan`, `bench:size`, `bench:geometry`, `lighthouse` | The measurements above |
 | `pnpm verify` | Lint, typecheck, licences, coverage, integration, simulator and build in one go |
