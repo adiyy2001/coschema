@@ -126,6 +126,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @coschema/e2e exec playwright install --with-deps chromium
       - run: pnpm test:e2e
+      - run: pnpm test:e2e:pages
       - uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
