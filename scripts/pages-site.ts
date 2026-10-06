@@ -2,7 +2,7 @@ import { copyFileSync, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const PAGES_BASE = '/coschema/';
+export const PAGES_BASE = '/';
 export const PAGES_SITE_ROOT = resolve(import.meta.dirname, '../apps/editor/dist/pages/browser');
 export const PAGES_ROUTES = ['demo', 'solo'] as const;
 export const NOT_FOUND_PAGE = '404.html';

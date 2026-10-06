@@ -45,7 +45,7 @@
             },
             "pages": {
               "outputPath": "dist/pages",
-              "baseHref": "/coschema/",
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/app/start-page.ts",

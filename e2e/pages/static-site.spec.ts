@@ -1,5 +1,4 @@
 import { expect, test, type Page } from '@playwright/test';
-import { PAGES_BASE } from '../../scripts/pages-site';
 import { dragIn, expectDemoReady, pane, positionsIn } from '../support/demo';
 
 interface Traffic {
@@ -11,7 +10,7 @@ function watchTraffic(page: Page, origin: string): Traffic {
   const traffic: Traffic = { foreign: [], sockets: [] };
   page.on('request', (request) => {
     const url = new URL(request.url());
-    if (url.origin !== origin || !url.pathname.startsWith(PAGES_BASE)) {
+    if (url.origin !== origin) {
       traffic.foreign.push(request.url());
     }
   });
@@ -27,9 +26,9 @@ test.describe('static site on GitHub Pages @pages', () => {
     baseURL,
   }, testInfo) => {
     const traffic = watchTraffic(page, baseURL ?? '');
-    const response = await page.goto(PAGES_BASE);
+    const response = await page.goto('/');
     expect(response?.status()).toBe(200);
-    await expect(page).toHaveURL(`${PAGES_BASE}demo`);
+    await expect(page).toHaveURL('/demo');
     await expect(page).toHaveTitle('Live demo | coschema');
     await expectDemoReady(page);
     await dragIn(page, pane(page, 'Ada'), 'intake', 120, 80);
@@ -42,7 +41,7 @@ test.describe('static site on GitHub Pages @pages', () => {
   });
 
   test('a deep link to the demo is served with its query @pages', async ({ page }) => {
-    const response = await page.goto(`${PAGES_BASE}demo?panes=3`);
+    const response = await page.goto('/demo?panes=3');
     expect(response?.status()).toBe(200);
     await expectDemoReady(page, 3);
   });
@@ -50,17 +49,17 @@ test.describe('static site on GitHub Pages @pages', () => {
   test('an unknown path boots the app from 404.html and lands on the demo @pages', async ({
     page,
   }) => {
-    const response = await page.goto(`${PAGES_BASE}no/such/page`);
+    const response = await page.goto('/no/such/page');
     expect(response?.status()).toBe(404);
-    await expect(page).toHaveURL(`${PAGES_BASE}demo`);
+    await expect(page).toHaveURL('/demo');
     await expectDemoReady(page);
   });
 
-  test('the solo editor link stays under the base path @pages', async ({ page }) => {
-    await page.goto(`${PAGES_BASE}demo`);
+  test('the solo editor link opens the sandbox @pages', async ({ page }) => {
+    await page.goto('/demo');
     await expectDemoReady(page);
     await page.getByRole('link', { name: 'Solo editor' }).click();
-    await expect(page).toHaveURL(`${PAGES_BASE}solo`);
+    await expect(page).toHaveURL('/solo');
     await expect(page).toHaveTitle('Local sandbox | coschema');
     await expect(page.locator('[data-node-id]')).toHaveCount(7);
   });
