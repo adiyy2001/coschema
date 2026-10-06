@@ -4,7 +4,7 @@ A real-time collaborative diagram editor with live cursors, offline editing, per
 
 ![Two editors side by side: one goes offline, both edit, the link comes back and the copies merge. Then live cursors and follow mode.](docs/media/demo.gif)
 
-Live demo: not deployed yet.
+Live demo: <https://adiyy2001.github.io/coschema/>. It opens the `/demo` page, and the room runs inside your browser, so nothing is sent to a server.
 
 [![CI](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml/badge.svg)](https://github.com/adiyy2001/coschema/actions/workflows/ci.yml)
 ![Coverage of lines, packages, server and editor together](docs/media/coverage.svg)
@@ -184,16 +184,17 @@ The dev server is at <http://127.0.0.1:4217>. The editor in dev mode does not pr
 | `pnpm lint` | ESLint with strict type-checked rules, Prettier, a no-comments check and a no-dashes check, a check that only one Yjs is installed |
 | `pnpm typecheck` | `tsc` for every package, `ngc` with template checking for the editor |
 | `pnpm check:licenses` | Fails on any dependency outside MIT, Apache-2.0, BSD, ISC and 0BSD, with the named exceptions of [ADR 0018](docs/adr/0018-dev-tool-licence-exceptions.md) |
-| `pnpm test` | 654 unit tests in the packages, the server and the scripts, and 351 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
+| `pnpm test` | 660 unit tests in the packages, the server and the scripts, and 351 in the editor: fractional indexing, the validity layer, undo cases, the router against a brute force search, the interaction state machine, the keyboard model, the announcer |
 | `pnpm test:coverage` | The same with thresholds: 90% of lines for core logic, 80% for the rest. Lines covered: 98.75% in the packages and the server, 96.85% in the editor |
 | `pnpm test:integration` | 40 server tests against real PostgreSQL started in Docker: reconnect with partial state, compaction keeps the document, appends during compaction, bad tokens are rejected, idle unloading, shutdown flush |
 | `pnpm test:sim` and `pnpm sim --seeds 5000` | The fast-check convergence property and the seed loop |
 | `pnpm test:e2e` | 41 Playwright tests on the production build, with several browser contexts: an edit appears for the other user, offline edits merge after reconnect, the keyboard path, the demo page, export. `pnpm test:e2e:postgres` runs them against PostgreSQL |
+| `pnpm test:e2e:pages` | Builds the GitHub Pages version under `/coschema/` and serves it the way Pages does. 4 Playwright tests: the root opens the demo, two editors sync with no WebSocket and no request outside the site, deep links and the solo editor link work |
 | `pnpm test:compose` | Clones the committed HEAD into a temporary directory, runs `docker compose up --build` there, syncs an edit through nginx, then `down -v` |
 | `pnpm bench:load`, `bench:saturation`, `bench:latency`, `bench:pan`, `bench:size`, `bench:geometry`, `lighthouse` | The measurements above |
 | `pnpm verify` | Lint, typecheck, licences, coverage, integration, simulator and build in one go |
 
-The end to end suite uses Playwright because Cypress cannot drive two browsers in one test ([ADR 0013](docs/adr/0013-playwright-for-e2e.md)). CI (`.github/workflows/ci.yml`) has jobs for verification, integration, the simulator, e2e, accessibility, compose and a lint of the workflow file itself. The workflow has not run on GitHub yet and `act` was not available, so I ran each job's commands locally one by one.
+The end to end suite uses Playwright because Cypress cannot drive two browsers in one test ([ADR 0013](docs/adr/0013-playwright-for-e2e.md)). CI (`.github/workflows/ci.yml`) has jobs for verification, integration, the simulator, e2e, accessibility, compose and a lint of the workflow file itself. `.github/workflows/pages.yml` builds the static demo, runs the Pages tests and deploys it to GitHub Pages ([ADR 0028](docs/adr/0028-static-demo-on-github-pages.md)).
 
 ## Design decisions
 
@@ -206,13 +207,13 @@ The decisions that matter most:
 - Per-user undo with explicit gestures ([0008](docs/adr/0008-per-user-undo.md)).
 - Wire protocol, first-message JWT and acknowledgements ([0009](docs/adr/0009-wire-protocol-and-auth.md)).
 - An append-only update log in PostgreSQL with compaction ([0010](docs/adr/0010-persistence-update-log-and-snapshots.md)).
-- One room hub that runs in the server, the simulator and the demo page ([0011](docs/adr/0011-transport-abstraction-and-in-browser-hub.md)).
+- One room hub that runs in the server, the simulator and the demo page ([0011](docs/adr/0011-transport-abstraction-and-in-browser-hub.md)), and the demo as a static site on GitHub Pages ([0028](docs/adr/0028-static-demo-on-github-pages.md)).
 - The convergence simulator ([0012](docs/adr/0012-convergence-simulator.md)), and how it fails fast ([0027](docs/adr/0027-fail-fast-simulator-saturation-and-network-events.md)).
 - SVG rendering with grid culling and levels of detail ([0014](docs/adr/0014-svg-rendering-and-culling.md)).
 - Orthogonal routing with A* on a sparse grid ([0015](docs/adr/0015-orthogonal-routing-on-a-sparse-grid.md)).
 - Accessibility model and the demo page ([0016](docs/adr/0016-accessibility-model.md), [0023](docs/adr/0023-accessibility-and-demo-page.md)).
 
-All 27 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) lists what I cut.
+All 28 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) lists what I cut.
 
 ## Limitations and what I would do next
 
