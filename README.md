@@ -14,9 +14,9 @@ The GIF is the `/demo` page: two editors, each behind its own simulated network 
 
 ## Why I built this
 
-Diagram editors are my day job. I work on software that generates single-line diagrams of high-voltage electrical substations, with Angular and diagram rendering on the front end and Java and Quarkus behind it. In real teams several people edit the same diagram at the same time.
+I currently work on a diagram editing tool as part of my day job. It creates single-line diagrams for high-voltage electrical substations. On the frontend, Angular and diagram rendering are used. On the backend, Quarkus and Java are used. The end result of the tool is a diagram. In practice within teams multiple people often collaborate on the same diagram simultaneously.
 
-I wanted the hard parts of collaboration: keeping a graph valid when two people change it at once, undoing only your own edits, and merging offline work cleanly. The editor is also keyboard operable and announces remote changes to screen readers, because collaborative canvases rarely are.
+I wanted to replace opinions with tests for some of the difficult aspects of collaboration. Specifically, support for two people editing a graph while maintaining graph integrity, support for undoing only the actions performed by the user and support for cleanly integrating offline changes. The tool is also keyboard operable and announces remote actions to screen readers since collaborative canvases are not often so supported.
 
 ## What is hard about it
 
