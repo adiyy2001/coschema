@@ -10,7 +10,7 @@ Live demo: <https://coschema.adrianturbinski.pl/>. It opens the `/demo` page, an
 ![Coverage of lines, packages, server and editor together](docs/media/coverage.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-The GIF is the `/demo` page: two editors, each behind its own simulated network link with latency, jitter and packet loss sliders and an offline switch. Ada goes offline, both people edit, the link comes back and the two copies merge. After that you see the cursors and follow mode. The recording script is `bench/demo-gif/main.ts`.
+The GIF is the `/demo` page: there are two editors, each sitting behind its own simulated network link with sliders for latency, jitter and packet loss and an offline switch. Ada goes offline, both people edit, the link comes back up and the two copies merge. You see the cursors and follow mode after that. The script used to record it is `bench/demo-gif/main.ts`.
 
 ## Why I built this
 
@@ -213,7 +213,7 @@ The decisions that matter most:
 - Orthogonal routing with A* on a sparse grid ([0015](docs/adr/0015-orthogonal-routing-on-a-sparse-grid.md)).
 - Accessibility model and the demo page ([0016](docs/adr/0016-accessibility-model.md), [0023](docs/adr/0023-accessibility-and-demo-page.md)).
 
-All 28 records are in [`docs/adr`](docs/adr). The tooling choices (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) lists what I cut.
+All 28 records are in [`docs/adr`](docs/adr). The tooling decisions (Vitest, Playwright, TypeScript 6, no Nx) have their own, and [ADR 0025](docs/adr/0025-scope-cuts-and-what-is-not-built.md) captures what I cut.
 
 ## Limitations and what I would do next
 
